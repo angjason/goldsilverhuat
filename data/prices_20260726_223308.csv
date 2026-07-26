@@ -1,0 +1,196 @@
+timestamp,product,dealer,price,currency,in_stock,url
+2026-07-26T22:33:08.146861,1g PAMP Gold Bar,UOB,210.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,1g PAMP Gold Bar,GoldSilver Central,216.68,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/pamp-suisse/1-gram-pamp-suisse-gold-bar/
+2026-07-26T22:33:08.146861,1g PAMP Gold Bar,Silver Bullion,256.66,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_PAMP_Suisse_1g
+2026-07-26T22:33:08.146861,1g PAMP Gold Bar,Indigo Precious Metals,260.00,SGD,True,https://www.indigopreciousmetals.com/1-gram-gold-pamp-suisse-lady-fortuna-veriscanr-in-assay-indigo-precious-metals.html
+2026-07-26T22:33:08.146861,1g PAMP Gold Bar,BullionStar,265.37,SGD,True,https://www.bullionstar.com/buy/product/gold-pamp-1-g
+2026-07-26T22:33:08.146861,5g PAMP Gold Bar,UOB,920.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,5g PAMP Gold Bar,GoldSilver Central,928.40,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/pamp-suisse/pamp-suisse-gold-bar-5g/
+2026-07-26T22:33:08.146861,5g PAMP Gold Bar,BullionStar,979.74,SGD,True,https://www.bullionstar.com/buy/product/gold-pamp-5g
+2026-07-26T22:33:08.146861,5g PAMP Gold Bar,Indigo Precious Metals,984.67,SGD,True,https://www.indigopreciousmetals.com/5-gram-pamp-lady-fortuna-gold-minted-bar.html
+2026-07-26T22:33:08.146861,10g PAMP Gold Bar,Indigo Precious Metals,1825.14,SGD,True,https://www.indigopreciousmetals.com/pamp-suisse-lady-fortuna-10-gram-gold-minted-bar.html
+2026-07-26T22:33:08.146861,10g PAMP Gold Bar,GoldSilver Central,1826.80,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/pamp-suisse/pamp-suisse-gold-bar-10g/
+2026-07-26T22:33:08.146861,10g PAMP Gold Bar,BullionStar,1826.82,SGD,True,https://www.bullionstar.com/buy/product/gold-pamp-10g
+2026-07-26T22:33:08.146861,10g PAMP Gold Bar,UOB,1838.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,20g PAMP Gold Bar,UOB,3487.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,20g PAMP Gold Bar,GoldSilver Central,3563.59,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/pamp-suisse/pamp-suisse-gold-bar-20g/
+2026-07-26T22:33:08.146861,20g PAMP Gold Bar,Indigo Precious Metals,3565.04,SGD,True,https://www.indigopreciousmetals.com/pamp-suisse-lady-fortuna-20-gram-gold-minted-bar.html
+2026-07-26T22:33:08.146861,20g PAMP Gold Bar,BullionStar,3577.45,SGD,True,https://www.bullionstar.com/buy/product/gold-pamp-20g
+2026-07-26T22:33:08.146861,1oz PAMP Gold Bar,UOB,5449.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,1oz PAMP Gold Bar,LPM,5456.00,SGD,True,https://www.lpm.sg/sg_en/1-oz-pamp-suisse-lady-fortuna-with-veriscan-9999-gold-bar-carbon-neutral.html
+2026-07-26T22:33:08.146861,1oz PAMP Gold Bar,BullionStar,5485.48,SGD,True,https://www.bullionstar.com/buy/product/gold-pamp-1oz-lady-fortuna-design
+2026-07-26T22:33:08.146861,1oz PAMP Gold Bar,Indigo Precious Metals,5511.65,SGD,True,https://www.indigopreciousmetals.com/1-oz-pamp-suisse-lady-fortuna-gold-minted-bar.html
+2026-07-26T22:33:08.146861,1oz PAMP Gold Bar,GoldSilver Central,5530.21,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/pamp-suisse/pamp-suisse-gold-bar-1oz/
+2026-07-26T22:33:08.146861,50g PAMP Gold Bar,UOB,8616.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,50g PAMP Gold Bar,BullionStar,8701.90,SGD,True,https://www.bullionstar.com/buy/product/gold-pamp-cast-50g
+2026-07-26T22:33:08.146861,50g PAMP Gold Bar,Silver Bullion,8734.54,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_PAMP_Suisse_50g
+2026-07-26T22:33:08.146861,50g PAMP Gold Bar,Indigo Precious Metals,8758.14,SGD,True,https://www.indigopreciousmetals.com/pamp-suisse-lady-fortuna-50-gram-gold-minted-bar.html
+2026-07-26T22:33:08.146861,50g PAMP Gold Bar,GoldSilver Central,8798.98,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/pamp-suisse/pamp-suisse-gold-bar-50g/
+2026-07-26T22:33:08.146861,100g PAMP Gold Bar,UOB,17155.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,100g PAMP Gold Bar,BullionStar,17266.27,SGD,True,https://www.bullionstar.com/buy/product/gold-pamp-cast-100g
+2026-07-26T22:33:08.146861,100g PAMP Gold Bar,Indigo Precious Metals,17276.53,SGD,True,https://www.indigopreciousmetals.com/pamp-suisse-100-gram-999-cast-gold-bar.html
+2026-07-26T22:33:08.146861,100g PAMP Gold Bar,GoldSilver Central,17523.97,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/pamp-suisse/pamp-suisse-lady-fortuna-gold-bar-100g/
+2026-07-26T22:33:08.146861,1g Perth Mint Gold Bar,GoldSilver Central,212.18,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/perth-mint-gold-bar/perth-mint-gold-minted-bar-1g/
+2026-07-26T22:33:08.146861,1g Perth Mint Gold Bar,LPM,224.43,SGD,True,https://www.lpm.sg/sg_en/1-gram-perth-mint-9999-gold-bar-in-assay.html
+2026-07-26T22:33:08.146861,1g Perth Mint Gold Bar,Silver Bullion,227.44,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_Perth_Mint_1g
+2026-07-26T22:33:08.146861,1g Perth Mint Gold Bar,BullionStar,245.27,SGD,True,https://www.bullionstar.com/buy/product/gold-bar-perth-mint-1g-new
+2026-07-26T22:33:08.146861,5g Perth Mint Gold Bar,BullionStar,961.48,SGD,True,https://www.bullionstar.com/buy/product/gold-perth-new-5g
+2026-07-26T22:33:08.146861,5g Perth Mint Gold Bar,Silver Bullion,983.03,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_Perth_Mint_5g
+2026-07-26T22:33:08.146861,10g Perth Mint Gold Bar,BullionStar,1801.65,SGD,True,https://www.bullionstar.com/buy/product/gold-perth-mint-new-10g
+2026-07-26T22:33:08.146861,10g Perth Mint Gold Bar,Silver Bullion,1832.60,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_Perth_Mint_10g
+2026-07-26T22:33:08.146861,20g Perth Mint Gold Bar,Silver Bullion,3531.74,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_Perth_Mint_20g
+2026-07-26T22:33:08.146861,20g Perth Mint Gold Bar,BullionStar,3545.84,SGD,True,https://www.bullionstar.com/buy/product/gold-perth-new-20g
+2026-07-26T22:33:08.146861,1oz Perth Mint Gold Bar,LPM,5404.40,SGD,True,https://www.lpm.sg/sg_en/1-oz-perth-mint-9999-gold-cast-bar.html
+2026-07-26T22:33:08.146861,1oz Perth Mint Gold Bar,BullionStar,5414.78,SGD,True,https://www.bullionstar.com/buy/product/perth-mint-1oz-square-button-bar
+2026-07-26T22:33:08.146861,1oz Perth Mint Gold Bar,Silver Bullion,5433.49,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Cast_Bar_Perth_Mint_1oz
+2026-07-26T22:33:08.146861,1oz Perth Mint Gold Bar,Indigo Precious Metals,5487.05,SGD,True,https://www.indigopreciousmetals.com/1-oz-perth-mint-cast-gold-bar.html
+2026-07-26T22:33:08.146861,50g Perth Mint Gold Bar,BullionStar,8688.08,SGD,True,https://www.bullionstar.com/buy/product/gold-perth-mint-new-50g
+2026-07-26T22:33:08.146861,50g Perth Mint Gold Bar,Silver Bullion,8703.26,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_Perth_Mint_50g
+2026-07-26T22:33:08.146861,100g Perth Mint Gold Bar,Indigo Precious Metals,17144.09,SGD,True,https://www.indigopreciousmetals.com/100-gram-perth-mint-kangaroo-gold-minted-bar-99-99.html
+2026-07-26T22:33:08.146861,100g Perth Mint Gold Bar,BullionStar,17189.45,SGD,True,https://www.bullionstar.com/buy/product/gold-perth-new-100g-cast
+2026-07-26T22:33:08.146861,100g Perth Mint Gold Bar,Silver Bullion,17343.98,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_Perth_Mint_100g
+2026-07-26T22:33:08.146861,1g Argor-Heraeus Gold Bar,GoldSilver Central,211.68,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-gold-bar-1g/
+2026-07-26T22:33:08.146861,1g Argor-Heraeus Gold Bar,LPM,231.52,SGD,True,https://www.lpm.sg/sg_en/1-gram-argor-heraeus-minted-bar-9999-gold-bar.html
+2026-07-26T22:33:08.146861,1g Argor-Heraeus Gold Bar,Indigo Precious Metals,244.61,SGD,True,https://www.indigopreciousmetals.com/gold-1-gram-argor-heraeus-minted-bar.html
+2026-07-26T22:33:08.146861,1g Argor-Heraeus Gold Bar,BullionStar,248.57,SGD,True,https://www.bullionstar.com/buy/product/gold-argor-heraeus-1g
+2026-07-26T22:33:08.146861,5g Argor-Heraeus Gold Bar,GoldSilver Central,928.40,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-kinebar-gold-bar-5g/
+2026-07-26T22:33:08.146861,5g Argor-Heraeus Gold Bar,Indigo Precious Metals,963.55,SGD,True,https://www.indigopreciousmetals.com/gold-5-gram-argor-heraeus-minted-bar-indigo-precious-metals.html
+2026-07-26T22:33:08.146861,5g Argor-Heraeus Gold Bar,BullionStar,977.17,SGD,True,https://www.bullionstar.com/buy/product/gold-argor-heraeus-5g
+2026-07-26T22:33:08.146861,10g Argor-Heraeus Gold Bar,UOB,1802.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,10g Argor-Heraeus Gold Bar,Indigo Precious Metals,1807.72,SGD,True,https://www.indigopreciousmetals.com/gold-10-gram-argor-heraeus-minted-bar.html
+2026-07-26T22:33:08.146861,10g Argor-Heraeus Gold Bar,BullionStar,1816.46,SGD,True,https://www.bullionstar.com/buy/product/gold-argor-heraeus-10g
+2026-07-26T22:33:08.146861,10g Argor-Heraeus Gold Bar,GoldSilver Central,1821.80,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-gold-bar-10g/
+2026-07-26T22:33:08.146861,20g Argor-Heraeus Gold Bar,Indigo Precious Metals,3540.39,SGD,True,https://www.indigopreciousmetals.com/20-gram-gold-argor-heraeus-minted-bar.html
+2026-07-26T22:33:08.146861,20g Argor-Heraeus Gold Bar,GoldSilver Central,3558.59,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-gold-bar-20g/
+2026-07-26T22:33:08.146861,20g Argor-Heraeus Gold Bar,BullionStar,3566.04,SGD,True,https://www.bullionstar.com/buy/product/gold-bar-argor-heraeus-20g
+2026-07-26T22:33:08.146861,1oz Argor-Heraeus Gold Bar,Indigo Precious Metals,5399.71,SGD,True,https://www.indigopreciousmetals.com/1-oz-argor-heraeus-gold-minted-bar-origin-traced.html
+2026-07-26T22:33:08.146861,1oz Argor-Heraeus Gold Bar,UOB,5412.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,1oz Argor-Heraeus Gold Bar,LPM,5443.10,SGD,True,https://www.lpm.sg/sg_en/1oz-argor-heraeus-9999-gold-kine-bar.html
+2026-07-26T22:33:08.146861,1oz Argor-Heraeus Gold Bar,BullionStar,5444.66,SGD,True,https://www.bullionstar.com/buy/product/gold-argor-heraeus-1oz
+2026-07-26T22:33:08.146861,1oz Argor-Heraeus Gold Bar,GoldSilver Central,5490.21,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-gold-bar-1oz/
+2026-07-26T22:33:08.146861,50g Argor-Heraeus Gold Bar,Indigo Precious Metals,8675.77,SGD,True,https://www.indigopreciousmetals.com/gold-50-gram-argor-heraeus-cast-bar.html
+2026-07-26T22:33:08.146861,50g Argor-Heraeus Gold Bar,BullionStar,8688.08,SGD,True,https://www.bullionstar.com/buy/product/gold-bar-argor-heraeus-cast-50g
+2026-07-26T22:33:08.146861,50g Argor-Heraeus Gold Bar,Silver Bullion,8699.09,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Cast_Bar_Argor-Heraeus_50g
+2026-07-26T22:33:08.146861,50g Argor-Heraeus Gold Bar,GoldSilver Central,8768.98,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-cast-gold-bar-50g/
+2026-07-26T22:33:08.146861,100g Argor-Heraeus Gold Bar,BullionStar,17206.98,SGD,True,https://www.bullionstar.com/buy/product/gold-argor-heraeus-cast-100
+2026-07-26T22:33:08.146861,100g Argor-Heraeus Gold Bar,Indigo Precious Metals,17214.86,SGD,True,https://www.indigopreciousmetals.com/argor-heraeus-gold-100-gram-cast-bar.html
+2026-07-26T22:33:08.146861,100g Argor-Heraeus Gold Bar,Silver Bullion,17302.28,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Cast_Bar_Argor-Heraeus_100g
+2026-07-26T22:33:08.146861,100g Argor-Heraeus Gold Bar,GoldSilver Central,17468.97,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-cast-gold-bar-100g/
+2026-07-26T22:33:08.146861,1g Valcambi Gold Bar,Indigo Precious Metals,258.29,SGD,True,https://www.indigopreciousmetals.com/1-gram-valcambi-gold-minted-bar.html
+2026-07-26T22:33:08.146861,1g Valcambi Gold Bar,BullionStar,5381.97,SGD,True,https://www.bullionstar.com/buy/product/1oz-valcambi
+2026-07-26T22:33:08.146861,5g Valcambi Gold Bar,Indigo Precious Metals,973.05,SGD,True,https://www.indigopreciousmetals.com/5-gram-valcambi-gold-minted-bar.html
+2026-07-26T22:33:08.146861,20g Valcambi Gold Bar,Indigo Precious Metals,3566.53,SGD,True,https://www.indigopreciousmetals.com/valcambi-20-gram-gold-minted-bar.html
+2026-07-26T22:33:08.146861,1oz Valcambi Gold Bar,BullionStar,5381.97,SGD,True,https://www.bullionstar.com/buy/product/1oz-valcambi
+2026-07-26T22:33:08.146861,1oz Valcambi Gold Bar,Indigo Precious Metals,5420.83,SGD,True,https://www.indigopreciousmetals.com/1-oz-valcambi-gold-bar-carded.html
+2026-07-26T22:33:08.146861,50g Valcambi Gold Bar,Silver Bullion,8703.26,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_Valcambi_Suisse_50g
+2026-07-26T22:33:08.146861,50g Valcambi Gold Bar,Indigo Precious Metals,8708.91,SGD,True,https://www.indigopreciousmetals.com/valcambi-50-gram-gold-minted-bar.html
+2026-07-26T22:33:08.146861,100g Valcambi Gold Bar,Indigo Precious Metals,17245.75,SGD,True,https://www.indigopreciousmetals.com/valcambi-100-gram-gold-minted-bar.html
+2026-07-26T22:33:08.146861,100g Valcambi Gold Bar,Silver Bullion,17343.98,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_Valcambi_Suisse_100g
+2026-07-26T22:33:08.146861,1oz Heraeus Silver Bar,Indigo Precious Metals,81.98,SGD,True,https://www.indigopreciousmetals.com/1oz-argor-heraeus-silver-swiss-minted-bar.html
+2026-07-26T22:33:08.146861,1oz Heraeus Silver Bar,BullionStar,88.54,SGD,True,https://www.bullionstar.com/buy/product/silver-heraeus-1oz
+2026-07-26T22:33:08.146861,1oz Heraeus Silver Bar,LPM,140.54,SGD,True,https://www.lpm.sg/sg_en/1oz-argor-heraeus-999-silver-minted-bar.html
+2026-07-26T22:33:08.146861,1oz Heraeus Silver Bar,UOB,5412.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,10oz Heraeus Silver Bar,Indigo Precious Metals,808.08,SGD,True,https://www.indigopreciousmetals.com/10-oz-heraeus-silver-cast-bar-9999-purity-w-coa-pre-order.html
+2026-07-26T22:33:08.146861,10oz Heraeus Silver Bar,BullionStar,836.28,SGD,True,https://www.bullionstar.com/buy/product/silver-heraeus-10oz
+2026-07-26T22:33:08.146861,10oz Heraeus Silver Bar,LPM,838.50,SGD,True,https://www.lpm.sg/sg_en/10-oz-heraeus-9999-silver-bar.html
+2026-07-26T22:33:08.146861,10oz Heraeus Silver Bar,Silver Bullion,840.29,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Silver_Cast_Bar_Heraeus_10oz
+2026-07-26T22:33:08.146861,1kg Heraeus Silver Bar,Indigo Precious Metals,2561.89,SGD,True,https://www.indigopreciousmetals.com/1-kilo-heraeus-silver-cast-bar-999-purity-w-coa-indigo-precious-metals.html
+2026-07-26T22:33:08.146861,1kg Heraeus Silver Bar,BullionStar,2600.14,SGD,True,https://www.bullionstar.com/buy/product/silver-heraeus-1kg
+2026-07-26T22:33:08.146861,1kg Heraeus Silver Bar,LPM,2617.04,SGD,True,https://www.lpm.sg/sg_en/1-kilo-heraeus-999-silver-bar.html
+2026-07-26T22:33:08.146861,1kg Heraeus Silver Bar,Silver Bullion,2622.36,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Silver_Cast_Bar_Heraeus_1kg
+2026-07-26T22:33:08.146861,1kg Heraeus Silver Bar,GoldSilver Central,2762.90,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-silver/buy-silver-bar/heraeus-2/heraeus-silver-bar-1kg/
+2026-07-26T22:33:08.146861,1oz Perth Mint Silver Bar,LPM,87.01,SGD,True,https://www.lpm.sg/sg_en/1-oz-perth-mint-kangaroo-9999-silver-bar.html
+2026-07-26T22:33:08.146861,1oz Perth Mint Silver Bar,BullionStar,87.04,SGD,True,https://www.bullionstar.com/buy/product/silver-bar-perth-mint-1-oz
+2026-07-26T22:33:08.146861,1oz Perth Mint Silver Bar,GoldSilver Central,88.93,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-silver/buy-silver-bar/perth-mint-silver-bar/perth-mint-kangaroo-minted-silver-bar-1oz/
+2026-07-26T22:33:08.146861,1oz Perth Mint Silver Bar,Indigo Precious Metals,102.86,SGD,True,https://www.indigopreciousmetals.com/1oz-2024-perth-mint-dragon-silver-rectangular-coin.html
+2026-07-26T22:33:08.146861,10oz Perth Mint Silver Bar,Silver Bullion,846.77,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Silver_Cast_Bar_Perth_Mint_10oz
+2026-07-26T22:33:08.146861,10oz Perth Mint Silver Bar,GoldSilver Central,889.27,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-silver/buy-silver-bar/perth-mint-silver-bar/perth-mint-10-oz-silver-bar/
+2026-07-26T22:33:08.146861,1kg Perth Mint Silver Bar,Indigo Precious Metals,2571.73,SGD,True,https://www.indigopreciousmetals.com/perth-mint-silver-cast-bar-1-kg-999-ag-good-delivery-singapore-pickup-or-freeport-client-vaulting.html
+2026-07-26T22:33:08.146861,1kg Perth Mint Silver Bar,BullionStar,2597.10,SGD,True,https://www.bullionstar.com/buy/product/silver-perth-mint-1kg
+2026-07-26T22:33:08.146861,1kg Perth Mint Silver Bar,Silver Bullion,2622.36,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Silver_Cast_Bar_Perth_Mint_1kg
+2026-07-26T22:33:08.146861,1kg Perth Mint Silver Bar,GoldSilver Central,2747.90,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-silver/buy-silver-bar/perth-mint-silver-bar/perth-mint-silver-bar-1-kg/
+2026-07-26T22:33:08.146861,1oz Nadir Silver Bar,LPM,86.04,SGD,True,https://www.lpm.sg/sg_en/1-oz-nadir-999-silver-bar-in-assay.html
+2026-07-26T22:33:08.146861,10oz Nadir Silver Bar,Indigo Precious Metals,808.13,SGD,True,https://www.indigopreciousmetals.com/10-oz-nadir-silver-cast-bar.html
+2026-07-26T22:33:08.146861,10oz Nadir Silver Bar,BullionStar,830.47,SGD,True,https://www.bullionstar.com/buy/product/nadir10oz
+2026-07-26T22:33:08.146861,10oz Nadir Silver Bar,Silver Bullion,840.29,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Silver_Cast_Bar_Nadir_10oz
+2026-07-26T22:33:08.146861,10oz Nadir Silver Bar,LPM,1508.55,SGD,True,https://www.lpm.sg/sg_en/10-oz-nadir-9999-silver-cast-bar-serial-number-62222.html
+2026-07-26T22:33:08.146861,100g Nadir Silver Bar,BullionStar,281.99,SGD,True,https://www.bullionstar.com/buy/product/nadir100g
+2026-07-26T22:33:08.146861,100g Nadir Silver Bar,LPM,683.03,SGD,True,https://www.lpm.sg/sg_en/100-gram-nadir-999-silver-bar-in-assay-serial-number-072888.html
+2026-07-26T22:33:08.146861,250g Nadir Silver Bar,Indigo Precious Metals,662.10,SGD,True,https://www.indigopreciousmetals.com/250-gram-nadir-silver-cast-bar.html
+2026-07-26T22:33:08.146861,250g Nadir Silver Bar,LPM,663.09,SGD,True,https://www.lpm.sg/sg_en/250-gram-nadir-9999-silver-bar.html
+2026-07-26T22:33:08.146861,250g Nadir Silver Bar,BullionStar,687.90,SGD,True,https://www.bullionstar.com/buy/product/nadir250g
+2026-07-26T22:33:08.146861,500g Nadir Silver Bar,Indigo Precious Metals,1303.01,SGD,True,https://www.indigopreciousmetals.com/500-gram-nadir-silver-cast-bar.html
+2026-07-26T22:33:08.146861,500g Nadir Silver Bar,LPM,1310.62,SGD,True,https://www.lpm.sg/sg_en/500-gram-nadir-9999-silver-bar.html
+2026-07-26T22:33:08.146861,500g Nadir Silver Bar,BullionStar,1316.49,SGD,True,https://www.bullionstar.com/buy/product/nadir500g
+2026-07-26T22:33:08.146861,1kg Nadir Silver Bar,LPM,2558.99,SGD,True,https://www.lpm.sg/sg_en/kg-nadir-9999-silver-bar.html
+2026-07-26T22:33:08.146861,1kg Nadir Silver Bar,Indigo Precious Metals,2559.43,SGD,True,https://www.indigopreciousmetals.com/1-kg-nadir-refinery-silver-bar.html
+2026-07-26T22:33:08.146861,1kg Nadir Silver Bar,BullionStar,2597.10,SGD,True,https://www.bullionstar.com/buy/product/nadir1000g
+2026-07-26T22:33:08.146861,1kg Nadir Silver Bar,Silver Bullion,2622.36,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Silver_Cast_Bar_Nadir_1kg
+2026-07-26T22:33:08.146861,1oz PAMP Silver Bar,Indigo Precious Metals,117.49,SGD,True,https://www.indigopreciousmetals.com/1-oz-pamp-suisse-lady-fortuna-silver-minted-bar.html
+2026-07-26T22:33:08.146861,1oz PAMP Silver Bar,BullionStar,144.46,SGD,True,https://www.bullionstar.com/buy/product/silver-bars-pamp-lunar-horse-1oz-2026
+2026-07-26T22:33:08.146861,1kg PAMP Silver Bar,Indigo Precious Metals,2581.58,SGD,True,https://www.indigopreciousmetals.com/pamp-suisse-1-kilo-cast-999-silver-bar.html
+2026-07-26T22:33:08.146861,1kg PAMP Silver Bar,BullionStar,2603.01,SGD,True,https://www.bullionstar.com/buy/product/silver-pamp-1kg-circulated
+2026-07-26T22:33:08.146861,1g Gold Bar (any brand),UOB,170.19,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,1g Gold Bar (any brand),GoldSilver Central,211.68,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-gold-bar-1g/
+2026-07-26T22:33:08.146861,1g Gold Bar (any brand),LPM,224.43,SGD,True,https://www.lpm.sg/sg_en/1-gram-perth-mint-9999-gold-bar-in-assay.html
+2026-07-26T22:33:08.146861,1g Gold Bar (any brand),Silver Bullion,227.44,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_Perth_Mint_1g
+2026-07-26T22:33:08.146861,1g Gold Bar (any brand),Indigo Precious Metals,244.61,SGD,True,https://www.indigopreciousmetals.com/gold-1-gram-argor-heraeus-minted-bar.html
+2026-07-26T22:33:08.146861,1g Gold Bar (any brand),BullionStar,245.27,SGD,True,https://www.bullionstar.com/buy/product/gold-bar-perth-mint-1g-new
+2026-07-26T22:33:08.146861,5g Gold Bar (any brand),UOB,920.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,5g Gold Bar (any brand),GoldSilver Central,928.40,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/pamp-suisse/pamp-suisse-gold-bar-5g/
+2026-07-26T22:33:08.146861,5g Gold Bar (any brand),BullionStar,961.48,SGD,True,https://www.bullionstar.com/buy/product/gold-perth-new-5g
+2026-07-26T22:33:08.146861,5g Gold Bar (any brand),Indigo Precious Metals,963.55,SGD,True,https://www.indigopreciousmetals.com/gold-5-gram-argor-heraeus-minted-bar-indigo-precious-metals.html
+2026-07-26T22:33:08.146861,5g Gold Bar (any brand),Silver Bullion,964.15,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_LBMA_Various_Brand_5g
+2026-07-26T22:33:08.146861,10g Gold Bar (any brand),BullionStar,1801.65,SGD,True,https://www.bullionstar.com/buy/product/gold-perth-mint-new-10g
+2026-07-26T22:33:08.146861,10g Gold Bar (any brand),Indigo Precious Metals,1807.72,SGD,True,https://www.indigopreciousmetals.com/gold-10-gram-argor-heraeus-minted-bar.html
+2026-07-26T22:33:08.146861,10g Gold Bar (any brand),Silver Bullion,1811.75,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_LBMA_Various_Brand_10g
+2026-07-26T22:33:08.146861,10g Gold Bar (any brand),GoldSilver Central,1821.80,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-gold-bar-10g/
+2026-07-26T22:33:08.146861,10g Gold Bar (any brand),UOB,1838.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,20g Gold Bar (any brand),UOB,3487.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,20g Gold Bar (any brand),Silver Bullion,3531.74,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_Perth_Mint_20g
+2026-07-26T22:33:08.146861,20g Gold Bar (any brand),Indigo Precious Metals,3540.39,SGD,True,https://www.indigopreciousmetals.com/20-gram-gold-argor-heraeus-minted-bar.html
+2026-07-26T22:33:08.146861,20g Gold Bar (any brand),BullionStar,3545.84,SGD,True,https://www.bullionstar.com/buy/product/gold-perth-new-20g
+2026-07-26T22:33:08.146861,20g Gold Bar (any brand),GoldSilver Central,3558.59,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-gold-bar-20g/
+2026-07-26T22:33:08.146861,1oz Gold Bar (any brand),Indigo Precious Metals,5358.71,SGD,True,https://www.indigopreciousmetals.com/1-toz-canadian-gold-maple-year-2019.html
+2026-07-26T22:33:08.146861,1oz Gold Bar (any brand),LPM,5404.40,SGD,True,https://www.lpm.sg/sg_en/1-oz-perth-mint-9999-gold-cast-bar.html
+2026-07-26T22:33:08.146861,1oz Gold Bar (any brand),Silver Bullion,5407.55,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_LBMA_Various_Brand_1oz
+2026-07-26T22:33:08.146861,1oz Gold Bar (any brand),BullionStar,5423.05,SGD,True,https://www.bullionstar.com/buy/product/gold-coin-uk-britannia-1oz-2026
+2026-07-26T22:33:08.146861,1oz Gold Bar (any brand),UOB,5449.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,1oz Gold Bar (any brand),GoldSilver Central,5490.21,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-gold-bar-1oz/
+2026-07-26T22:33:08.146861,50g Gold Bar (any brand),UOB,8616.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,50g Gold Bar (any brand),Indigo Precious Metals,8675.77,SGD,True,https://www.indigopreciousmetals.com/gold-50-gram-argor-heraeus-cast-bar.html
+2026-07-26T22:33:08.146861,50g Gold Bar (any brand),BullionStar,8688.08,SGD,True,https://www.bullionstar.com/buy/product/gold-perth-mint-new-50g
+2026-07-26T22:33:08.146861,50g Gold Bar (any brand),Silver Bullion,8692.84,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Cast_Bar_Heraeus_50g
+2026-07-26T22:33:08.146861,50g Gold Bar (any brand),GoldSilver Central,8768.98,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-cast-gold-bar-50g/
+2026-07-26T22:33:08.146861,100g Gold Bar (any brand),BullionStar,17105.98,SGD,True,https://www.bullionstar.com/buy/product/gold-minted-argor-circulated-100g
+2026-07-26T22:33:08.146861,100g Gold Bar (any brand),Indigo Precious Metals,17144.09,SGD,True,https://www.indigopreciousmetals.com/100-gram-perth-mint-kangaroo-gold-minted-bar-99-99.html
+2026-07-26T22:33:08.146861,100g Gold Bar (any brand),UOB,17155.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,100g Gold Bar (any brand),Silver Bullion,17218.87,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Minted_Bar_LBMA_Various_Brand_100g
+2026-07-26T22:33:08.146861,100g Gold Bar (any brand),GoldSilver Central,17468.97,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-bar/argor-heraeus/argor-heraeus-cast-gold-bar-100g/
+2026-07-26T22:33:08.146861,1oz Silver Bar (any brand),UOB,77.37,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,1oz Silver Bar (any brand),Indigo Precious Metals,81.98,SGD,True,https://www.indigopreciousmetals.com/1oz-argor-heraeus-silver-swiss-minted-bar.html
+2026-07-26T22:33:08.146861,1oz Silver Bar (any brand),LPM,86.04,SGD,True,https://www.lpm.sg/sg_en/1-oz-nadir-999-silver-bar-in-assay.html
+2026-07-26T22:33:08.146861,1oz Silver Bar (any brand),GoldSilver Central,86.93,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-silver/buy-silver-coin/perth-mint-silver-coin/2011-australian-koala-silver-coin-1oz/
+2026-07-26T22:33:08.146861,1oz Silver Bar (any brand),BullionStar,87.04,SGD,True,https://www.bullionstar.com/buy/product/silver-bar-perth-mint-1-oz
+2026-07-26T22:33:08.146861,10oz Silver Bar (any brand),LPM,805.61,SGD,True,https://www.lpm.sg/sg_en/10-oz-abc-refinery-the-southern-cross-9999-silver-minted-bar.html
+2026-07-26T22:33:08.146861,10oz Silver Bar (any brand),Indigo Precious Metals,808.08,SGD,True,https://www.indigopreciousmetals.com/10-oz-heraeus-silver-cast-bar-9999-purity-w-coa-pre-order.html
+2026-07-26T22:33:08.146861,10oz Silver Bar (any brand),BullionStar,836.28,SGD,True,https://www.bullionstar.com/buy/product/silver-heraeus-10oz
+2026-07-26T22:33:08.146861,10oz Silver Bar (any brand),Silver Bullion,840.29,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Silver_Cast_Bar_Nadir_10oz
+2026-07-26T22:33:08.146861,10oz Silver Bar (any brand),GoldSilver Central,889.27,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-silver/buy-silver-bar/perth-mint-silver-bar/perth-mint-10-oz-silver-bar/
+2026-07-26T22:33:08.146861,100g Silver Bar (any brand),Indigo Precious Metals,270.88,SGD,True,https://www.indigopreciousmetals.com/100-gram-valcambi-silver-minted-bar-pre-order-eta-march.html
+2026-07-26T22:33:08.146861,100g Silver Bar (any brand),LPM,683.03,SGD,True,https://www.lpm.sg/sg_en/100-gram-nadir-999-silver-bar-in-assay-serial-number-072888.html
+2026-07-26T22:33:08.146861,250g Silver Bar (any brand),Indigo Precious Metals,662.10,SGD,True,https://www.indigopreciousmetals.com/250-gram-nadir-silver-cast-bar.html
+2026-07-26T22:33:08.146861,250g Silver Bar (any brand),LPM,663.09,SGD,True,https://www.lpm.sg/sg_en/250-gram-nadir-9999-silver-bar.html
+2026-07-26T22:33:08.146861,250g Silver Bar (any brand),BullionStar,699.33,SGD,True,https://www.bullionstar.com/buy/product/silver-metalor-250g
+2026-07-26T22:33:08.146861,500g Silver Bar (any brand),Indigo Precious Metals,1295.02,SGD,True,https://www.indigopreciousmetals.com/500-gram-valcambi-silver-minted-bar.html
+2026-07-26T22:33:08.146861,500g Silver Bar (any brand),LPM,1310.62,SGD,True,https://www.lpm.sg/sg_en/500-gram-nadir-9999-silver-bar.html
+2026-07-26T22:33:08.146861,500g Silver Bar (any brand),BullionStar,1316.49,SGD,True,https://www.bullionstar.com/buy/product/silver-metalor-500g-circulated
+2026-07-26T22:33:08.146861,1kg Silver Bar (any brand),Indigo Precious Metals,2556.97,SGD,True,https://www.indigopreciousmetals.com/jbr-uk-silver-1-kilo-bar-lbma-good-delivery-indigo-precious-metals.html
+2026-07-26T22:33:08.146861,1kg Silver Bar (any brand),LPM,2558.99,SGD,True,https://www.lpm.sg/sg_en/kg-nadir-9999-silver-bar.html
+2026-07-26T22:33:08.146861,1kg Silver Bar (any brand),Silver Bullion,2580.66,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Silver_Bar_LBMA_Various_Brand_1kg
+2026-07-26T22:33:08.146861,1kg Silver Bar (any brand),BullionStar,2597.10,SGD,True,https://www.bullionstar.com/buy/product/silver-perth-mint-1kg
+2026-07-26T22:33:08.146861,1kg Silver Bar (any brand),GoldSilver Central,2747.90,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-silver/buy-silver-bar/perth-mint-silver-bar/perth-mint-silver-bar-1-kg/
+2026-07-26T22:33:08.146861,1 oz Canadian Maple Leaf Gold Coin,BullionStar,5433.36,SGD,True,https://www.bullionstar.com/buy/product/gold-coin-canadian-maple-1oz-2026
+2026-07-26T22:33:08.146861,1 oz Canadian Maple Leaf Gold Coin,UOB,5449.00,SGD,True,https://www.uobgroup.com/online-rates/gold-and-silver-prices.page
+2026-07-26T22:33:08.146861,1 oz Canadian Maple Leaf Gold Coin,Silver Bullion,5491.86,SGD,True,https://www.silverbullion.com.sg/Product/Detail/Gold_Coin_Maple_Leaf_2023_1oz
+2026-07-26T22:33:08.146861,1 oz Canadian Maple Leaf Gold Coin,GoldSilver Central,5500.21,SGD,True,https://www.goldsilvercentral.com.sg/shop/buy-gold/buy-gold-coin/canadian-mint-gold-coin/prior-years-canadian-maple-leaf-gold-coin-1oz/

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bullion Price Comparison — 26 Jul 2026 20:34</title>
+<style>
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+    padding: 2rem;
+    line-height: 1.5;
+}
+.container { max-width: 800px; margin: 0 auto; }
+h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+.timestamp {
+    color: #6e6e73;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+.spot-card {
+    background: #1d1d1f;
+    color: #f5f5f7;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.spot-card h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+.spot-card .unit { font-weight: 400; color: #a1a1a6; }
+.spot-table { width: 100%; }
+.spot-table td {
+    padding: 0.4rem 0;
+    font-size: 1rem;
+}
+.spot-table .price {
+    text-align: right;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+.source {
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    color: #a1a1a6;
+}
+.product-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.product-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #1d1d1f;
+}
+.price-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.price-table th {
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6e6e73;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e5ea;
+}
+.price-table th:nth-child(2),
+.price-table th:nth-child(3) { text-align: right; }
+.price-table td {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid #f2f2f7;
+    font-size: 0.95rem;
+}
+.price-table .dealer { font-weight: 500; }
+.price-table .price {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+}
+.price-table .premium {
+    text-align: right;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+.premium-low { color: #34c759; }
+.premium-mid { color: #ff9500; }
+.premium-high { color: #ff3b30; }
+.oos { color: #8e8e93; font-style: italic; font-size: 0.8rem; }
+.oos-row td { color: #8e8e93; }
+.cheapest-row td { color: #1d1d1f; }
+.cheapest-row .price { font-weight: 700; }
+.badge {
+    display: inline-block;
+    background: #34c759;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+}
+.summary {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e5e5ea;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.summary-savings {
+    font-weight: 600;
+    color: #34c759;
+    font-size: 0.9rem;
+}
+.summary-premium {
+    font-size: 0.85rem;
+    color: #6e6e73;
+}
+@media (max-width: 600px) {
+    body { padding: 1rem; }
+    .summary { flex-direction: column; align-items: flex-start; }
+}
+
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Bullion Price Comparison</h1>
+    <p class="timestamp">Generated: Sunday, 26 July 2026 at 20:34:12</p>
+    
+    <div class="spot-card">
+        <h2>Spot Prices <span class="unit">(per troy oz)</span></h2>
+        <table class="spot-table">
+            <tr><td>Gold</td><td class="price">SGD 5,235.23</td></tr><tr><td>Silver</td><td class="price">SGD 75.08</td></tr>
+        </table>
+        <p class="source">Source: XE.com (mid-market rate)</p>
+    </div>
+    
+    <div class="product-card">
+        <h3>1 oz PAMP Lady Fortuna Gold Bar</h3>
+        <table class="price-table">
+            <thead>
+                <tr>
+                    <th>Dealer</th>
+                    <th>Price</th>
+                    <th>Premium</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            <tr class="cheapest-row">
+                <td class="dealer">UOB <span class="badge">BEST</span></td>
+                <td class="price">SGD 5,449.00</td>
+                <td class="premium premium-mid">+4.1%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">LPM</td>
+                <td class="price">SGD 5,456.00</td>
+                <td class="premium premium-mid">+4.2%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">BullionStar</td>
+                <td class="price">SGD 5,485.48</td>
+                <td class="premium premium-mid">+4.8%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">Indigo Precious Metals</td>
+                <td class="price">SGD 5,511.65</td>
+                <td class="premium premium-mid">+5.3%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">GoldSilver Central</td>
+                <td class="price">SGD 5,530.21</td>
+                <td class="premium premium-mid">+5.6%</td>
+            </tr>
+            </tbody>
+        </table>
+        
+        <div class="summary">
+            <span class="summary-savings">Save SGD 81.21 vs GoldSilver Central</span>
+            <span class="summary-premium">Premium: SGD 213.77 (4.1% over spot)</span>
+        </div>
+    </div>
+    <div class="product-card">
+        <h3>1 oz Perth Mint Gold Bar</h3>
+        <table class="price-table">
+            <thead>
+                <tr>
+                    <th>Dealer</th>
+                    <th>Price</th>
+                    <th>Premium</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            <tr class="cheapest-row">
+                <td class="dealer">LPM <span class="badge">BEST</span></td>
+                <td class="price">SGD 5,410.85</td>
+                <td class="premium premium-low">+3.4%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">BullionStar</td>
+                <td class="price">SGD 5,425.35</td>
+                <td class="premium premium-low">+3.6%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">Silver Bullion</td>
+                <td class="price">SGD 5,433.49</td>
+                <td class="premium premium-low">+3.8%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">Indigo Precious Metals</td>
+                <td class="price">SGD 5,487.05</td>
+                <td class="premium premium-mid">+4.8%</td>
+            </tr>
+            </tbody>
+        </table>
+        
+        <div class="summary">
+            <span class="summary-savings">Save SGD 76.20 vs Indigo Precious Metals</span>
+            <span class="summary-premium">Premium: SGD 175.62 (3.4% over spot)</span>
+        </div>
+    </div>
+    <div class="product-card">
+        <h3>1 oz Canadian Maple Leaf Gold Coin</h3>
+        <table class="price-table">
+            <thead>
+                <tr>
+                    <th>Dealer</th>
+                    <th>Price</th>
+                    <th>Premium</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            <tr class="cheapest-row">
+                <td class="dealer">BullionStar <span class="badge">BEST</span></td>
+                <td class="price">SGD 5,433.36</td>
+                <td class="premium premium-low">+3.8%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">UOB</td>
+                <td class="price">SGD 5,449.00</td>
+                <td class="premium premium-mid">+4.1%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">Silver Bullion</td>
+                <td class="price">SGD 5,491.86</td>
+                <td class="premium premium-mid">+4.9%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">GoldSilver Central</td>
+                <td class="price">SGD 5,500.21</td>
+                <td class="premium premium-mid">+5.1%</td>
+            </tr>
+            </tbody>
+        </table>
+        
+        <div class="summary">
+            <span class="summary-savings">Save SGD 66.85 vs GoldSilver Central</span>
+            <span class="summary-premium">Premium: SGD 198.13 (3.8% over spot)</span>
+        </div>
+    </div>
+    <div class="product-card">
+        <h3>100 g Silver Bar</h3>
+        <table class="price-table">
+            <thead>
+                <tr>
+                    <th>Dealer</th>
+                    <th>Price</th>
+                    <th>Premium</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            <tr class="cheapest-row">
+                <td class="dealer">Indigo Precious Metals <span class="badge">BEST</span></td>
+                <td class="price">SGD 270.88</td>
+                <td class="premium premium-high">+12.2%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">LPM</td>
+                <td class="price">SGD 683.03</td>
+                <td class="premium premium-high">+183.0%</td>
+            </tr>
+            </tbody>
+        </table>
+        
+        <div class="summary">
+            <span class="summary-savings">Save SGD 412.15 vs LPM</span>
+            <span class="summary-premium">Premium: SGD 29.49 (12.2% over spot)</span>
+        </div>
+    </div>
+    <div class="product-card">
+        <h3>1 kg Silver Bar</h3>
+        <table class="price-table">
+            <thead>
+                <tr>
+                    <th>Dealer</th>
+                    <th>Price</th>
+                    <th>Premium</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            <tr class="cheapest-row">
+                <td class="dealer">LPM <span class="badge">BEST</span></td>
+                <td class="price">SGD 2,558.99</td>
+                <td class="premium premium-high">+6.0%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">Indigo Precious Metals</td>
+                <td class="price">SGD 2,559.43</td>
+                <td class="premium premium-high">+6.0%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">Silver Bullion</td>
+                <td class="price">SGD 2,580.66</td>
+                <td class="premium premium-high">+6.9%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">BullionStar</td>
+                <td class="price">SGD 2,613.94</td>
+                <td class="premium premium-high">+8.3%</td>
+            </tr>
+            <tr class="">
+                <td class="dealer">GoldSilver Central</td>
+                <td class="price">SGD 2,747.90</td>
+                <td class="premium premium-high">+13.8%</td>
+            </tr>
+            </tbody>
+        </table>
+        
+        <div class="summary">
+            <span class="summary-savings">Save SGD 188.91 vs GoldSilver Central</span>
+            <span class="summary-premium">Premium: SGD 145.07 (6.0% over spot)</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>
