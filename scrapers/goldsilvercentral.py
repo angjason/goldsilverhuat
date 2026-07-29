@@ -4,27 +4,64 @@ WooCommerce-based with server-rendered prices.
 Product names are in the title attribute of thumbnail links.
 Prices are in SGD format: S$5,530.21
 The /shop/ page lists all products with pagination (?product-page=N).
+
+Uses Playwright in CI to avoid IP-based blocking from cloud environments.
+Falls back to httpx locally for speed.
 """
 
 from __future__ import annotations
 
 import logging
+import os
 import re
 from decimal import Decimal
 
+import httpx
 from bs4 import BeautifulSoup
 
 from models.product import ScrapedProduct
-from scrapers.base import BaseScraper
+from scrapers.playwright_base import PlaywrightScraper
 
 logger = logging.getLogger(__name__)
 
+_USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/125.0.0.0 Safari/537.36"
+)
 
-class GoldSilverCentralScraper(BaseScraper):
+
+class GoldSilverCentralScraper(PlaywrightScraper):
     dealer_name = "GoldSilver Central"
     base_url = "https://www.goldsilvercentral.com.sg"
 
     SHOP_URL = "/shop/"
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._use_playwright = os.environ.get("CI") == "true"
+        self._http_client: httpx.AsyncClient | None = None
+
+    async def __aenter__(self):
+        if not self._use_playwright:
+            self._http_client = httpx.AsyncClient(
+                timeout=httpx.Timeout(30.0),
+                follow_redirects=True,
+                headers={"User-Agent": _USER_AGENT},
+            )
+        return self
+
+    async def __aexit__(self, *exc):
+        if self._http_client:
+            await self._http_client.aclose()
+        await super().__aexit__(*exc)
+
+    async def _fetch_page(self, url: str) -> str:
+        if self._use_playwright:
+            return await self._get_page_content(url, wait_selector="li.product")
+        response = await self._http_client.get(url)
+        response.raise_for_status()
+        return response.text
 
     async def scrape(self) -> list[ScrapedProduct]:
         products: list[ScrapedProduct] = []
@@ -55,7 +92,7 @@ class GoldSilverCentralScraper(BaseScraper):
                 url = f"{self.base_url}{self.SHOP_URL}page/{page}/"
 
             try:
-                html = await self.fetch(url)
+                html = await self._fetch_page(url)
             except Exception:
                 break
 
