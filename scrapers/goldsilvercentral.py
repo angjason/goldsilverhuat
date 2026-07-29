@@ -12,23 +12,15 @@ Falls back to httpx locally for speed.
 from __future__ import annotations
 
 import logging
-import os
 import re
 from decimal import Decimal
 
-import httpx
 from bs4 import BeautifulSoup
 
 from models.product import ScrapedProduct
 from scrapers.playwright_base import PlaywrightScraper
 
 logger = logging.getLogger(__name__)
-
-_USER_AGENT = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) "
-    "Chrome/125.0.0.0 Safari/537.36"
-)
 
 
 class GoldSilverCentralScraper(PlaywrightScraper):
@@ -38,31 +30,26 @@ class GoldSilverCentralScraper(PlaywrightScraper):
 
     SHOP_URL = "/shop/"
 
-    def __init__(self) -> None:
-        super().__init__()
-        self._use_playwright = os.environ.get("CI") == "true"
-        self._http_client: httpx.AsyncClient | None = None
-
-    async def __aenter__(self):
-        if not self._use_playwright:
-            self._http_client = httpx.AsyncClient(
-                timeout=httpx.Timeout(30.0),
-                follow_redirects=True,
-                headers={"User-Agent": _USER_AGENT},
-            )
-        return self
-
-    async def __aexit__(self, *exc):
-        if self._http_client:
-            await self._http_client.aclose()
-        await super().__aexit__(*exc)
-
     async def _fetch_page(self, url: str) -> str:
-        if self._use_playwright:
-            return await self._get_page_content(url, wait_selector="li.product")
-        response = await self._http_client.get(url)
-        response.raise_for_status()
-        return response.text
+        """Fetch page using Playwright with stealth, waiting for Cloudflare to clear."""
+        await self._ensure_browser()
+
+        from playwright_stealth import stealth_async
+
+        page = await self._browser.new_page(
+            user_agent=(
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/125.0.0.0 Safari/537.36"
+            )
+        )
+        await stealth_async(page)
+        try:
+            await page.goto(url, timeout=self.page_timeout, wait_until="domcontentloaded")
+            await page.wait_for_selector("li.product", timeout=30000)
+            return await page.content()
+        finally:
+            await page.close()
 
     async def scrape(self) -> list[ScrapedProduct]:
         products: list[ScrapedProduct] = []
