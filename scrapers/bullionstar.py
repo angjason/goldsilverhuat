@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 class BullionStarScraper(PlaywrightScraper):
     dealer_name = "BullionStar"
     base_url = "https://www.bullionstar.com"
+    page_timeout = 90000
 
     CATEGORY_URLS = [
         "/buy/gold-bars",

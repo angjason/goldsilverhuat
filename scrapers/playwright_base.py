@@ -78,11 +78,12 @@ class PlaywrightScraper(abc.ABC):
                         "Chrome/125.0.0.0 Safari/537.36"
                     )
                 )
-                await page.goto(url, timeout=self.page_timeout, wait_until="networkidle")
+                wait_until = "domcontentloaded" if wait_selector else "networkidle"
+                await page.goto(url, timeout=self.page_timeout, wait_until=wait_until)
 
                 if wait_selector:
                     try:
-                        await page.wait_for_selector(wait_selector, timeout=10000)
+                        await page.wait_for_selector(wait_selector, timeout=30000)
                     except Exception:
                         pass
 
