@@ -85,8 +85,15 @@ async def main(output_dir: Path | None = None, filename: str | None = None) -> N
     scraper_results = results[:-2]
 
     all_products: list[ScrapedProduct] = []
-    for product_list in scraper_results:
-        all_products.extend(product_list)
+    failed_dealers: list[str] = []
+    for dealer, product_list in zip(dealers, scraper_results):
+        if product_list:
+            all_products.extend(product_list)
+        else:
+            failed_dealers.append(dealer.name)
+
+    if failed_dealers:
+        logger.warning("Dealers with no data: %s", ", ".join(failed_dealers))
 
     logger.info("Total products scraped: %d", len(all_products))
 
@@ -102,7 +109,11 @@ async def main(output_dir: Path | None = None, filename: str | None = None) -> N
     print_results(comparisons, spot)
 
     csv_path = export(comparisons)
-    html_path = export_html(comparisons, spot, history, output_dir=output_dir, filename=filename)
+    html_path = export_html(
+        comparisons, spot, history,
+        output_dir=output_dir, filename=filename,
+        failed_dealers=failed_dealers,
+    )
     logger.info("Results exported to %s", csv_path)
     logger.info("HTML report: %s", html_path)
 

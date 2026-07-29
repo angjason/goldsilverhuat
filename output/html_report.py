@@ -22,6 +22,7 @@ def export_html(
     history: list[SpotDataPoint] | None = None,
     output_dir: Path | None = None,
     filename: str | None = None,
+    failed_dealers: list[str] | None = None,
 ) -> Path:
     """Generate an HTML report and return the file path."""
     if output_dir is None:
@@ -36,7 +37,7 @@ def export_html(
         filename = f"{filename}.html"
     filepath = output_dir / filename
 
-    html = _build_html(results, spot, history, timestamp)
+    html = _build_html(results, spot, history, timestamp, failed_dealers or [])
     filepath.write_text(html)
 
     return filepath
@@ -63,6 +64,7 @@ def _build_html(
     spot: SpotPrices | None,
     history: list[SpotDataPoint] | None,
     timestamp: datetime,
+    failed_dealers: list[str] | None = None,
 ) -> str:
     groups: defaultdict[str, list[str]] = defaultdict(list)
 
@@ -84,6 +86,13 @@ def _build_html(
     spot_html = _spot_section(spot) if spot else ""
     chart_html = _chart_section(history) if history else ""
     promo_html = _promotions_section(results)
+    failed_html = ""
+    if failed_dealers:
+        dealer_list = ", ".join(failed_dealers)
+        failed_html = f"""
+    <div class="failed-notice">
+        <strong>Data unavailable:</strong> {dealer_list}
+    </div>"""
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -100,6 +109,7 @@ def _build_html(
 <div class="container">
     <h1>Bullion Price Comparison</h1>
     <p class="timestamp">Generated: {timestamp:%A, %d %B %Y at %H:%M:%S} SGT</p>
+    {failed_html}
     {spot_html}
     {chart_html}
     {promo_html}
@@ -444,6 +454,15 @@ h1 {
 .filter-bar select:focus {
     border-color: #007aff;
     box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+}
+.failed-notice {
+    background: #fff3f3;
+    border: 1px solid #ffcdd2;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    color: #c62828;
+    font-size: 0.9rem;
 }
 .promo-card {
     background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
