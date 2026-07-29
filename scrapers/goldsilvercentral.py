@@ -34,6 +34,7 @@ _USER_AGENT = (
 class GoldSilverCentralScraper(PlaywrightScraper):
     dealer_name = "GoldSilver Central"
     base_url = "https://www.goldsilvercentral.com.sg"
+    page_timeout = 60000
 
     SHOP_URL = "/shop/"
 
