@@ -39,7 +39,14 @@ async def fetch_spot_history(months: int = 12) -> list[SpotDataPoint]:
         dates.append(d)
 
     async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
-        tasks = [_fetch_date(client, d) for d in dates]
+        sem = asyncio.Semaphore(3)
+
+        async def limited_fetch(d):
+            async with sem:
+                await asyncio.sleep(0.5)
+                return await _fetch_date(client, d)
+
+        tasks = [limited_fetch(d) for d in dates]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
     data_points = []

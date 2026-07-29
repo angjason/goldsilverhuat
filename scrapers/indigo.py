@@ -82,33 +82,28 @@ class IndigoScraper(BaseScraper):
         return products
 
     async def _fetch_tier1_prices(self, products: list[ScrapedProduct]) -> None:
-        """Fetch Tier 1 (retail) prices from detail pages.
+        """Fetch Tier 1 (retail) prices from detail pages sequentially.
 
         The listing page shows the bulk discount (10+ qty) price.
         The detail page has itemprop="price" content="X" with the Tier 1 price.
         """
         import asyncio
 
-        sem = asyncio.Semaphore(2)
-
-        async def fetch_one(product: ScrapedProduct) -> None:
+        for product in products:
             if not product.url:
-                return
-            async with sem:
-                try:
-                    await asyncio.sleep(0.5)
-                    html = await self.fetch(product.url)
-                    soup = BeautifulSoup(html, "lxml")
-                    price_el = soup.select_one('[itemprop="price"][content]')
-                    if price_el:
-                        content = price_el.get("content", "")
-                        tier1_price = Decimal(content.replace(",", ""))
-                        if tier1_price > 10:
-                            product.price = tier1_price
-                except Exception:
-                    pass
-
-        await asyncio.gather(*[fetch_one(p) for p in products])
+                continue
+            try:
+                await asyncio.sleep(1)
+                html = await self.fetch(product.url)
+                soup = BeautifulSoup(html, "lxml")
+                price_el = soup.select_one('[itemprop="price"][content]')
+                if price_el:
+                    content = price_el.get("content", "")
+                    tier1_price = Decimal(content.replace(",", ""))
+                    if tier1_price > 10:
+                        product.price = tier1_price
+            except Exception:
+                pass
 
     def _parse_listing(self, html: str) -> list[ScrapedProduct]:
         soup = BeautifulSoup(html, "lxml")
