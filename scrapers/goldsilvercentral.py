@@ -3,53 +3,47 @@
 WooCommerce-based with server-rendered prices.
 Product names are in the title attribute of thumbnail links.
 Prices are in SGD format: S$5,530.21
-The /shop/ page lists all products with pagination (?product-page=N).
+The /shop/ page lists all products with pagination (page/N/).
 
-Uses Playwright in CI to avoid IP-based blocking from cloud environments.
-Falls back to httpx locally for speed.
+Uses curl_cffi with TLS impersonation to bypass Cloudflare.
 """
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import re
 from decimal import Decimal
 
 from bs4 import BeautifulSoup
+from curl_cffi.requests import AsyncSession
 
 from models.product import ScrapedProduct
-from scrapers.playwright_base import PlaywrightScraper
 
 logger = logging.getLogger(__name__)
 
 
-class GoldSilverCentralScraper(PlaywrightScraper):
+class GoldSilverCentralScraper:
     dealer_name = "GoldSilver Central"
     base_url = "https://www.goldsilvercentral.com.sg"
-    page_timeout = 60000
 
     SHOP_URL = "/shop/"
 
-    async def _fetch_page(self, url: str) -> str:
-        """Fetch page using Playwright with stealth, waiting for Cloudflare to clear."""
-        await self._ensure_browser()
+    def __init__(self) -> None:
+        self._session: AsyncSession | None = None
 
-        from playwright_stealth import stealth_async
+    async def __aenter__(self):
+        self._session = AsyncSession(impersonate="chrome")
+        return self
 
-        page = await self._browser.new_page(
-            user_agent=(
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/125.0.0.0 Safari/537.36"
-            )
-        )
-        await stealth_async(page)
-        try:
-            await page.goto(url, timeout=self.page_timeout, wait_until="domcontentloaded")
-            await page.wait_for_selector("li.product", timeout=30000)
-            return await page.content()
-        finally:
-            await page.close()
+    async def __aexit__(self, *exc):
+        if self._session:
+            await self._session.close()
+
+    async def _fetch(self, url: str) -> str:
+        resp = await self._session.get(url)
+        resp.raise_for_status()
+        return resp.text
 
     async def scrape(self) -> list[ScrapedProduct]:
         products: list[ScrapedProduct] = []
@@ -80,7 +74,8 @@ class GoldSilverCentralScraper(PlaywrightScraper):
                 url = f"{self.base_url}{self.SHOP_URL}page/{page}/"
 
             try:
-                html = await self._fetch_page(url)
+                await asyncio.sleep(1)
+                html = await self._fetch(url)
             except Exception:
                 break
 

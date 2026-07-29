@@ -29,7 +29,6 @@ DEALERS: list[DealerConfig] = [
         name="GoldSilver Central",
         base_url="https://www.goldsilvercentral.com.sg",
         scraper_module="scrapers.goldsilvercentral",
-        requires_js=True,
     ),
     DealerConfig(
         name="Silver Bullion",
