@@ -137,7 +137,10 @@ class BullionStarScraper(PlaywrightScraper):
 
         BullionStar rows show either:
         - Tiered pricing: "1-9 S$830.47 / 10-29 S$827.98 / ..." → take first (qty 1)
-        - Offer pricing: "Regular Price S$830.47 Any Quantity S$751.97" → offer detected
+        - Promo: "Limited Time Offer ... Regular Price S$830.47 Any Quantity S$751.97"
+
+        "Any Quantity" alone is a bulk discount, NOT a promotion.
+        Only treat as promotion when "Limited Time Offer" is also present.
 
         Returns (selling_price, promotion_or_None).
         """
@@ -157,9 +160,13 @@ class BullionStarScraper(PlaywrightScraper):
         if not valid:
             return None, None
 
-        is_offer = "any quantity" in text.lower() and len(valid) == 2
+        is_promo = (
+            "limited time offer" in text.lower()
+            and "any quantity" in text.lower()
+            and len(valid) >= 2
+        )
 
-        if is_offer:
+        if is_promo:
             regular = max(valid)
             offer = min(valid)
             promotion = Promotion(
@@ -169,4 +176,5 @@ class BullionStarScraper(PlaywrightScraper):
             )
             return offer, promotion
 
+        # Take the first (highest tier / qty 1) price
         return valid[0], None
