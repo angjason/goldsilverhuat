@@ -6,6 +6,7 @@ from collections import defaultdict
 from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 from models.product import ComparisonResult
 from services.spot_helper import get_spot_for_product
@@ -28,7 +29,7 @@ def export_html(
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    timestamp = datetime.now()
+    timestamp = datetime.now(ZoneInfo("Asia/Singapore"))
     if filename is None:
         filename = f"prices_{timestamp:%Y%m%d_%H%M%S}.html"
     elif not filename.endswith(".html"):
@@ -98,7 +99,7 @@ def _build_html(
 <body>
 <div class="container">
     <h1>Bullion Price Comparison</h1>
-    <p class="timestamp">Generated: {timestamp:%A, %d %B %Y at %H:%M:%S}</p>
+    <p class="timestamp">Generated: {timestamp:%A, %d %B %Y at %H:%M:%S} SGT</p>
     {spot_html}
     {chart_html}
     {promo_html}
@@ -172,7 +173,7 @@ def _promotions_section(results: list[ComparisonResult]) -> str:
         rows.append(f"""
             <tr>
                 <td class="promo-product">{canonical_name}</td>
-                <td class="promo-dealer">{p.dealer}</td>
+                <td class="promo-dealer">{'<a href="' + p.url + '" target="_blank">' + p.dealer + '</a>' if p.url else p.dealer}</td>
                 <td class="promo-regular"><s>SGD {promo.regular_price:,.2f}</s></td>
                 <td class="promo-offer">SGD {promo.offer_price:,.2f}</td>
                 <td class="promo-discount">-{promo.discount_pct:.1f}%</td>
@@ -329,17 +330,19 @@ def _product_section(result: ComparisonResult, spot: SpotPrices | None, group: s
         row_class = "cheapest-row" if is_cheapest else ""
         badge = ' <span class="badge">BEST</span>' if is_cheapest and len(in_stock) > 1 else ""
 
+        dealer_link = f'<a href="{p.url}" target="_blank">{p.dealer}</a>' if p.url else p.dealer
         rows.append(f"""
             <tr class="{row_class}">
-                <td class="dealer">{p.dealer}{badge}</td>
+                <td class="dealer">{dealer_link}{badge}</td>
                 <td class="price">SGD {p.price:,.2f}</td>
                 <td class="premium {premium_class}">{premium_str}</td>
             </tr>""")
 
     for p in out_of_stock:
+        dealer_link = f'<a href="{p.url}" target="_blank">{p.dealer}</a>' if p.url else p.dealer
         rows.append(f"""
             <tr class="oos-row">
-                <td class="dealer">{p.dealer}</td>
+                <td class="dealer">{dealer_link}</td>
                 <td class="price">SGD {p.price:,.2f}</td>
                 <td class="premium oos">OUT OF STOCK</td>
             </tr>""")
@@ -594,6 +597,15 @@ h1 {
     font-size: 0.95rem;
 }
 .price-table .dealer { font-weight: 500; }
+.price-table .dealer a, .promo-dealer a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(0,0,0,0.3);
+}
+.price-table .dealer a:hover, .promo-dealer a:hover {
+    border-bottom-style: solid;
+    color: #2563eb;
+}
 .price-table .price {
     text-align: right;
     font-variant-numeric: tabular-nums;
