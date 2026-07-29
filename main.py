@@ -1,8 +1,10 @@
 """Precious Metals Price Comparison Tool.
 
 Run: python main.py
+     python main.py --output-dir docs --filename index
 """
 
+import argparse
 import asyncio
 import importlib
 import logging
@@ -22,6 +24,7 @@ from output.csv_export import export
 from output.html_report import export_html
 from services.comparator import compare
 from services.normalizer import normalize
+from services.spot_history import fetch_spot_history
 from services.spot_price import fetch_spot_prices
 
 logging.basicConfig(
@@ -67,17 +70,19 @@ async def run_scraper(dealer_config) -> list[ScrapedProduct]:
         return []
 
 
-async def main() -> None:
+async def main(output_dir: Path | None = None, filename: str | None = None) -> None:
     dealers = get_enabled_dealers()
     logger.info("Running scrapers for %d dealers...", len(dealers))
 
     scraper_tasks = [run_scraper(dealer) for dealer in dealers]
     spot_task = fetch_spot_prices()
+    history_task = fetch_spot_history()
 
-    results = await asyncio.gather(*scraper_tasks, spot_task)
+    results = await asyncio.gather(*scraper_tasks, spot_task, history_task)
 
-    spot = results[-1]
-    scraper_results = results[:-1]
+    history = results[-1]
+    spot = results[-2]
+    scraper_results = results[:-2]
 
     all_products: list[ScrapedProduct] = []
     for product_list in scraper_results:
@@ -97,10 +102,15 @@ async def main() -> None:
     print_results(comparisons, spot)
 
     csv_path = export(comparisons)
-    html_path = export_html(comparisons, spot)
+    html_path = export_html(comparisons, spot, history, output_dir=output_dir, filename=filename)
     logger.info("Results exported to %s", csv_path)
     logger.info("HTML report: %s", html_path)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    parser = argparse.ArgumentParser(description="Precious Metals Price Comparison")
+    parser.add_argument("--output-dir", type=Path, default=None, help="Output directory for reports")
+    parser.add_argument("--filename", type=str, default=None, help="HTML filename (e.g. 'index')")
+    args = parser.parse_args()
+
+    asyncio.run(main(output_dir=args.output_dir, filename=args.filename))

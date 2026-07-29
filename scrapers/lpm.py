@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import re
 from decimal import Decimal
 from pathlib import Path
@@ -45,12 +46,13 @@ class LPMScraper:
         from playwright.async_api import async_playwright
 
         products: list[ScrapedProduct] = []
+        is_ci = os.environ.get("CI") == "true"
 
         try:
             async with async_playwright() as p:
                 browser = await p.chromium.launch_persistent_context(
                     str(PROFILE_DIR),
-                    headless=False,
+                    headless=is_ci,
                     executable_path=str(CHROME_PATH) if CHROME_PATH.exists() else None,
                     args=["--disable-blink-features=AutomationControlled"],
                 )

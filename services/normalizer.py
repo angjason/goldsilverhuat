@@ -39,6 +39,7 @@ def normalize(
                     currency=item.currency,
                     url=item.url,
                     in_stock=item.in_stock,
+                    promotion=item.promotion,
                 )
 
                 existing = best.get(key)

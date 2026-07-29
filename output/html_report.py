@@ -9,6 +9,7 @@ from pathlib import Path
 
 from models.product import ComparisonResult
 from services.spot_helper import get_spot_for_product
+from services.spot_history import SpotDataPoint
 from services.spot_price import SpotPrices
 
 OUTPUT_DIR = Path(__file__).parent.parent / "data"
@@ -17,7 +18,9 @@ OUTPUT_DIR = Path(__file__).parent.parent / "data"
 def export_html(
     results: list[ComparisonResult],
     spot: SpotPrices | None = None,
+    history: list[SpotDataPoint] | None = None,
     output_dir: Path | None = None,
+    filename: str | None = None,
 ) -> Path:
     """Generate an HTML report and return the file path."""
     if output_dir is None:
@@ -26,10 +29,13 @@ def export_html(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     timestamp = datetime.now()
-    filename = f"prices_{timestamp:%Y%m%d_%H%M%S}.html"
+    if filename is None:
+        filename = f"prices_{timestamp:%Y%m%d_%H%M%S}.html"
+    elif not filename.endswith(".html"):
+        filename = f"{filename}.html"
     filepath = output_dir / filename
 
-    html = _build_html(results, spot, timestamp)
+    html = _build_html(results, spot, history, timestamp)
     filepath.write_text(html)
 
     return filepath
@@ -54,6 +60,7 @@ def _get_group(canonical_name: str) -> str:
 def _build_html(
     results: list[ComparisonResult],
     spot: SpotPrices | None,
+    history: list[SpotDataPoint] | None,
     timestamp: datetime,
 ) -> str:
     groups: defaultdict[str, list[str]] = defaultdict(list)
@@ -74,6 +81,8 @@ def _build_html(
                         f'<h2 class="group-heading">{g}</h2>{cards}</div>')
 
     spot_html = _spot_section(spot) if spot else ""
+    chart_html = _chart_section(history) if history else ""
+    promo_html = _promotions_section(results)
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -81,6 +90,7 @@ def _build_html(
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bullion Price Comparison — {timestamp:%d %b %Y %H:%M}</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <style>
 {_CSS}
 </style>
@@ -90,6 +100,8 @@ def _build_html(
     <h1>Bullion Price Comparison</h1>
     <p class="timestamp">Generated: {timestamp:%A, %d %B %Y at %H:%M:%S}</p>
     {spot_html}
+    {chart_html}
+    {promo_html}
     <div class="filter-bar">
         <label for="group-filter">Filter by size:</label>
         <select id="group-filter" onchange="filterGroup(this.value)">
@@ -136,6 +148,160 @@ def _spot_section(spot: SpotPrices) -> str:
         </table>
         <p class="source">Source: {spot.source}</p>
     </div>"""
+
+
+def _promotions_section(results: list[ComparisonResult]) -> str:
+    """Generate a highlighted section showing all active promotions."""
+    promos = []
+    seen = set()
+
+    for result in results:
+        for p in result.prices:
+            if p.promotion and p.url not in seen:
+                seen.add(p.url)
+                promos.append((result.canonical_name, p))
+
+    if not promos:
+        return ""
+
+    promos.sort(key=lambda x: -x[1].promotion.discount_pct)
+
+    rows = []
+    for canonical_name, p in promos:
+        promo = p.promotion
+        rows.append(f"""
+            <tr>
+                <td class="promo-product">{canonical_name}</td>
+                <td class="promo-dealer">{p.dealer}</td>
+                <td class="promo-regular"><s>SGD {promo.regular_price:,.2f}</s></td>
+                <td class="promo-offer">SGD {promo.offer_price:,.2f}</td>
+                <td class="promo-discount">-{promo.discount_pct:.1f}%</td>
+            </tr>""")
+
+    return f"""
+    <div class="promo-card">
+        <h2>Active Promotions</h2>
+        <table class="promo-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Dealer</th>
+                    <th>Regular</th>
+                    <th>Offer</th>
+                    <th>Discount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {"".join(rows)}
+            </tbody>
+        </table>
+    </div>"""
+
+
+def _chart_section(history: list[SpotDataPoint]) -> str:
+    """Generate the 12-month spot price chart using Chart.js."""
+    labels = []
+    gold_data = []
+    silver_data = []
+
+    for point in history:
+        labels.append(f'"{point.date}"')
+        gold_data.append(str(round(float(point.gold_sgd), 2)) if point.gold_sgd else "null")
+        silver_data.append(str(round(float(point.silver_sgd), 2)) if point.silver_sgd else "null")
+
+    return f"""
+    <div class="chart-card">
+        <h2>Spot Price — 12 Month Trend</h2>
+        <div class="chart-tabs">
+            <button class="chart-tab active" onclick="showChart('gold')">Gold</button>
+            <button class="chart-tab" onclick="showChart('silver')">Silver</button>
+        </div>
+        <div class="chart-container" id="chart-gold">
+            <canvas id="goldChart"></canvas>
+        </div>
+        <div class="chart-container" id="chart-silver" style="display:none;">
+            <canvas id="silverChart"></canvas>
+        </div>
+    </div>
+    <script>
+    (function() {{
+        const labels = [{",".join(labels)}];
+        const goldData = [{",".join(gold_data)}];
+        const silverData = [{",".join(silver_data)}];
+
+        const chartOpts = {{
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {{ intersect: false, mode: 'index' }},
+            plugins: {{
+                legend: {{ display: false }},
+                tooltip: {{
+                    callbacks: {{
+                        label: ctx => 'SGD ' + ctx.parsed.y.toLocaleString(undefined, {{minimumFractionDigits: 2}})
+                    }}
+                }}
+            }},
+            scales: {{
+                x: {{
+                    grid: {{ display: false }},
+                    ticks: {{
+                        callback: function(val, idx) {{
+                            const d = new Date(labels[idx]);
+                            return d.toLocaleDateString('en-SG', {{month: 'short', year: '2-digit'}});
+                        }}
+                    }}
+                }},
+                y: {{
+                    grid: {{ color: '#f2f2f7' }},
+                    ticks: {{
+                        callback: val => 'SGD ' + val.toLocaleString()
+                    }}
+                }}
+            }}
+        }};
+
+        new Chart(document.getElementById('goldChart'), {{
+            type: 'line',
+            data: {{
+                labels: labels,
+                datasets: [{{
+                    data: goldData,
+                    borderColor: '#D4AF37',
+                    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#D4AF37',
+                }}]
+            }},
+            options: chartOpts
+        }});
+
+        new Chart(document.getElementById('silverChart'), {{
+            type: 'line',
+            data: {{
+                labels: labels,
+                datasets: [{{
+                    data: silverData,
+                    borderColor: '#8E8E93',
+                    backgroundColor: 'rgba(142, 142, 147, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#8E8E93',
+                }}]
+            }},
+            options: chartOpts
+        }});
+    }})();
+
+    function showChart(metal) {{
+        document.getElementById('chart-gold').style.display = metal === 'gold' ? '' : 'none';
+        document.getElementById('chart-silver').style.display = metal === 'silver' ? '' : 'none';
+        document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+    }}
+    </script>"""
 
 
 def _product_section(result: ComparisonResult, spot: SpotPrices | None, group: str) -> str:
@@ -275,6 +441,84 @@ h1 {
 .filter-bar select:focus {
     border-color: #007aff;
     box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+}
+.promo-card {
+    background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+    border: 1px solid #ffd54f;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.promo-card h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #e65100;
+}
+.promo-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.promo-table th {
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6e6e73;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 0.5rem;
+    border-bottom: 1px solid #ffe082;
+}
+.promo-table td {
+    padding: 0.6rem 0.5rem;
+    border-bottom: 1px solid #fff3cd;
+    font-size: 0.9rem;
+}
+.promo-product { font-weight: 500; }
+.promo-dealer { color: #6e6e73; }
+.promo-regular { color: #8e8e93; }
+.promo-offer { font-weight: 700; color: #1d1d1f; }
+.promo-discount {
+    font-weight: 700;
+    color: #e65100;
+    text-align: right;
+}
+.chart-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.chart-card h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+.chart-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.chart-tab {
+    padding: 0.4rem 1rem;
+    border: 1px solid #e5e5ea;
+    border-radius: 8px;
+    background: #f5f5f7;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: #6e6e73;
+    transition: all 0.15s;
+}
+.chart-tab.active {
+    background: #1d1d1f;
+    color: #fff;
+    border-color: #1d1d1f;
+}
+.chart-container {
+    height: 280px;
+    position: relative;
 }
 .group-section {
     margin-bottom: 2rem;

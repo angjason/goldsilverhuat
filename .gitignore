@@ -4,4 +4,6 @@ __pycache__/
 .env
 .chrome-lpm/
 .chrome/
+.tmp/
 Local Storage/
+docs/

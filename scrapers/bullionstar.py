@@ -14,7 +14,7 @@ from decimal import Decimal
 
 from bs4 import BeautifulSoup
 
-from models.product import ScrapedProduct
+from models.product import Promotion, ScrapedProduct
 from scrapers.playwright_base import PlaywrightScraper
 
 logger = logging.getLogger(__name__)
@@ -92,7 +92,7 @@ class BullionStarScraper(PlaywrightScraper):
         if not name:
             return None
 
-        price = self._extract_first_price(row_text)
+        price, promotion = self._extract_price_and_promotion(row_text)
         if price is None:
             return None
 
@@ -105,6 +105,7 @@ class BullionStarScraper(PlaywrightScraper):
             currency="SGD",
             url=url,
             in_stock=in_stock,
+            promotion=promotion,
         )
 
     def _extract_name(self, row_text: str, href: str) -> str:
@@ -130,18 +131,41 @@ class BullionStarScraper(PlaywrightScraper):
         return f"{slug_name} {description}".strip()
 
     @staticmethod
-    def _extract_first_price(text: str) -> Decimal | None:
-        """Extract the first (retail qty 1-9) S$ price from the row."""
+    def _extract_price_and_promotion(text: str) -> tuple[Decimal | None, Promotion | None]:
+        """Extract price and detect promotions.
+
+        BullionStar rows show either:
+        - Tiered pricing: "1-9 S$830.47 / 10-29 S$827.98 / ..." → take first (qty 1)
+        - Offer pricing: "Regular Price S$830.47 Any Quantity S$751.97" → offer detected
+
+        Returns (selling_price, promotion_or_None).
+        """
         prices = re.findall(r"S\$([\d,]+\.\d{2})", text)
         if not prices:
-            return None
+            return None, None
 
-        cleaned = prices[0].replace(",", "")
-        try:
-            price = Decimal(cleaned)
-            if price > 50:
-                return price
-        except Exception:
-            pass
+        valid = []
+        for p in prices:
+            try:
+                val = Decimal(p.replace(",", ""))
+                if val > 50:
+                    valid.append(val)
+            except Exception:
+                pass
 
-        return None
+        if not valid:
+            return None, None
+
+        is_offer = "any quantity" in text.lower() and len(valid) == 2
+
+        if is_offer:
+            regular = max(valid)
+            offer = min(valid)
+            promotion = Promotion(
+                regular_price=regular,
+                offer_price=offer,
+                label="Limited Time Offer",
+            )
+            return offer, promotion
+
+        return valid[0], None

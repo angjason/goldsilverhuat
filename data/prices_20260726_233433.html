@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bullion Price Comparison — 26 Jul 2026 22:36</title>
+<title>Bullion Price Comparison — 26 Jul 2026 23:34</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <style>
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -54,6 +55,84 @@ h1 {
 .filter-bar select:focus {
     border-color: #007aff;
     box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
+}
+.promo-card {
+    background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+    border: 1px solid #ffd54f;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.promo-card h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #e65100;
+}
+.promo-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.promo-table th {
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6e6e73;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 0.5rem;
+    border-bottom: 1px solid #ffe082;
+}
+.promo-table td {
+    padding: 0.6rem 0.5rem;
+    border-bottom: 1px solid #fff3cd;
+    font-size: 0.9rem;
+}
+.promo-product { font-weight: 500; }
+.promo-dealer { color: #6e6e73; }
+.promo-regular { color: #8e8e93; }
+.promo-offer { font-weight: 700; color: #1d1d1f; }
+.promo-discount {
+    font-weight: 700;
+    color: #e65100;
+    text-align: right;
+}
+.chart-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.chart-card h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+.chart-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.chart-tab {
+    padding: 0.4rem 1rem;
+    border: 1px solid #e5e5ea;
+    border-radius: 8px;
+    background: #f5f5f7;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: #6e6e73;
+    transition: all 0.15s;
+}
+.chart-tab.active {
+    background: #1d1d1f;
+    color: #fff;
+    border-color: #1d1d1f;
+}
+.chart-container {
+    height: 280px;
+    position: relative;
 }
 .group-section {
     margin-bottom: 2rem;
@@ -187,7 +266,7 @@ h1 {
 <body>
 <div class="container">
     <h1>Bullion Price Comparison</h1>
-    <p class="timestamp">Generated: Sunday, 26 July 2026 at 22:36:35</p>
+    <p class="timestamp">Generated: Sunday, 26 July 2026 at 23:34:33</p>
     
     <div class="spot-card">
         <h2>Spot Prices <span class="unit">(per troy oz)</span></h2>
@@ -195,6 +274,159 @@ h1 {
             <tr><td>Gold</td><td class="price">SGD 5,235.23</td></tr><tr><td>Silver</td><td class="price">SGD 75.08</td></tr>
         </table>
         <p class="source">Source: XE.com (mid-market rate)</p>
+    </div>
+    
+    <div class="chart-card">
+        <h2>Spot Price — 12 Month Trend</h2>
+        <div class="chart-tabs">
+            <button class="chart-tab active" onclick="showChart('gold')">Gold</button>
+            <button class="chart-tab" onclick="showChart('silver')">Silver</button>
+        </div>
+        <div class="chart-container" id="chart-gold">
+            <canvas id="goldChart"></canvas>
+        </div>
+        <div class="chart-container" id="chart-silver" style="display:none;">
+            <canvas id="silverChart"></canvas>
+        </div>
+    </div>
+    <script>
+    (function() {
+        const labels = ["2025-07-31","2025-08-30","2025-09-29","2025-10-29","2025-11-28","2025-12-28","2026-01-27","2026-02-26","2026-03-28","2026-04-27","2026-05-27","2026-06-26","2026-07-26"];
+        const goldData = [4277.63,4426.86,4940.82,5164.7,5450.58,5816.33,6425.58,6549.25,5808.92,5948.18,5665.61,5291.41,null];
+        const silverData = [47.55,51.02,60.7,62.29,72.21,101.69,136.36,109.86,90.01,95.47,95.17,76.83,null];
+
+        const chartOpts = {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { intersect: false, mode: 'index' },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => 'SGD ' + ctx.parsed.y.toLocaleString(undefined, {minimumFractionDigits: 2})
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        callback: function(val, idx) {
+                            const d = new Date(labels[idx]);
+                            return d.toLocaleDateString('en-SG', {month: 'short', year: '2-digit'});
+                        }
+                    }
+                },
+                y: {
+                    grid: { color: '#f2f2f7' },
+                    ticks: {
+                        callback: val => 'SGD ' + val.toLocaleString()
+                    }
+                }
+            }
+        };
+
+        new Chart(document.getElementById('goldChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: goldData,
+                    borderColor: '#D4AF37',
+                    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#D4AF37',
+                }]
+            },
+            options: chartOpts
+        });
+
+        new Chart(document.getElementById('silverChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: silverData,
+                    borderColor: '#8E8E93',
+                    backgroundColor: 'rgba(142, 142, 147, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#8E8E93',
+                }]
+            },
+            options: chartOpts
+        });
+    })();
+
+    function showChart(metal) {
+        document.getElementById('chart-gold').style.display = metal === 'gold' ? '' : 'none';
+        document.getElementById('chart-silver').style.display = metal === 'silver' ? '' : 'none';
+        document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+    </script>
+    
+    <div class="promo-card">
+        <h2>Active Promotions</h2>
+        <table class="promo-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Dealer</th>
+                    <th>Regular</th>
+                    <th>Offer</th>
+                    <th>Discount</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            <tr>
+                <td class="promo-product">10oz Nadir Silver Bar</td>
+                <td class="promo-dealer">BullionStar</td>
+                <td class="promo-regular"><s>SGD 830.47</s></td>
+                <td class="promo-offer">SGD 751.97</td>
+                <td class="promo-discount">-9.5%</td>
+            </tr>
+            <tr>
+                <td class="promo-product">1kg Heraeus Silver Bar</td>
+                <td class="promo-dealer">BullionStar</td>
+                <td class="promo-regular"><s>SGD 2,603.01</s></td>
+                <td class="promo-offer">SGD 2,562.44</td>
+                <td class="promo-discount">-1.6%</td>
+            </tr>
+            <tr>
+                <td class="promo-product">1oz Perth Mint Gold Bar</td>
+                <td class="promo-dealer">BullionStar</td>
+                <td class="promo-regular"><s>SGD 5,414.78</s></td>
+                <td class="promo-offer">SGD 5,368.63</td>
+                <td class="promo-discount">-0.9%</td>
+            </tr>
+            <tr>
+                <td class="promo-product">1oz PAMP Silver Bar</td>
+                <td class="promo-dealer">BullionStar</td>
+                <td class="promo-regular"><s>SGD 144.46</s></td>
+                <td class="promo-offer">SGD 144.02</td>
+                <td class="promo-discount">-0.3%</td>
+            </tr>
+            <tr>
+                <td class="promo-product">500g Silver Bar (any brand)</td>
+                <td class="promo-dealer">BullionStar</td>
+                <td class="promo-regular"><s>SGD 1,316.49</s></td>
+                <td class="promo-offer">SGD 1,312.54</td>
+                <td class="promo-discount">-0.3%</td>
+            </tr>
+            <tr>
+                <td class="promo-product">1oz Gold Bar (any brand)</td>
+                <td class="promo-dealer">BullionStar</td>
+                <td class="promo-regular"><s>SGD 5,423.05</s></td>
+                <td class="promo-offer">SGD 5,417.63</td>
+                <td class="promo-discount">-0.1%</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
     <div class="filter-bar">
         <label for="group-filter">Filter by size:</label>
@@ -1014,14 +1246,14 @@ h1 {
             <tbody>
                 
             <tr class="cheapest-row">
-                <td class="dealer">LPM <span class="badge">BEST</span></td>
-                <td class="price">SGD 5,404.40</td>
-                <td class="premium premium-low">+3.2%</td>
+                <td class="dealer">BullionStar <span class="badge">BEST</span></td>
+                <td class="price">SGD 5,368.63</td>
+                <td class="premium premium-low">+2.5%</td>
             </tr>
             <tr class="">
-                <td class="dealer">BullionStar</td>
-                <td class="price">SGD 5,414.78</td>
-                <td class="premium premium-low">+3.4%</td>
+                <td class="dealer">LPM</td>
+                <td class="price">SGD 5,404.40</td>
+                <td class="premium premium-low">+3.2%</td>
             </tr>
             <tr class="">
                 <td class="dealer">Silver Bullion</td>
@@ -1042,8 +1274,8 @@ h1 {
         </table>
         
         <div class="summary">
-            <span class="summary-savings">Save SGD 82.65 vs Indigo Precious Metals</span>
-            <span class="summary-premium">Premium: SGD 169.17 (3.2% over spot)</span>
+            <span class="summary-savings">Save SGD 118.42 vs Indigo Precious Metals</span>
+            <span class="summary-premium">Premium: SGD 133.40 (2.5% over spot)</span>
         </div>
     </div>
     <div class="product-card" data-group="1oz Gold">
@@ -1154,14 +1386,14 @@ h1 {
                 <td class="premium premium-low">+3.3%</td>
             </tr>
             <tr class="">
-                <td class="dealer">GoldSilver Central</td>
-                <td class="price">SGD 5,420.21</td>
+                <td class="dealer">BullionStar</td>
+                <td class="price">SGD 5,417.63</td>
                 <td class="premium premium-low">+3.5%</td>
             </tr>
             <tr class="">
-                <td class="dealer">BullionStar</td>
-                <td class="price">SGD 5,423.05</td>
-                <td class="premium premium-low">+3.6%</td>
+                <td class="dealer">GoldSilver Central</td>
+                <td class="price">SGD 5,420.21</td>
+                <td class="premium premium-low">+3.5%</td>
             </tr>
             <tr class="">
                 <td class="dealer">UOB</td>
@@ -1736,8 +1968,8 @@ h1 {
             </tr>
             <tr class="">
                 <td class="dealer">BullionStar</td>
-                <td class="price">SGD 144.46</td>
-                <td class="premium premium-high">+92.4%</td>
+                <td class="price">SGD 144.02</td>
+                <td class="premium premium-high">+91.8%</td>
             </tr>
             <tr class="">
                 <td class="dealer">GoldSilver Central</td>
@@ -2064,8 +2296,8 @@ h1 {
             </tr>
             <tr class="">
                 <td class="dealer">BullionStar</td>
-                <td class="price">SGD 1,316.49</td>
-                <td class="premium premium-high">+9.1%</td>
+                <td class="price">SGD 1,312.54</td>
+                <td class="premium premium-high">+8.7%</td>
             </tr>
             <tr class="oos-row">
                 <td class="dealer">GoldSilver Central</td>
@@ -2076,7 +2308,7 @@ h1 {
         </table>
         
         <div class="summary">
-            <span class="summary-savings">Save SGD 21.47 vs BullionStar</span>
+            <span class="summary-savings">Save SGD 17.52 vs BullionStar</span>
             <span class="summary-premium">Premium: SGD 88.06 (7.3% over spot)</span>
         </div>
     </div></div><div class="group-section" data-group="10oz Silver"><h2 class="group-heading">10oz Silver</h2>
@@ -2168,14 +2400,14 @@ h1 {
             <tbody>
                 
             <tr class="cheapest-row">
-                <td class="dealer">Indigo Precious Metals <span class="badge">BEST</span></td>
-                <td class="price">SGD 808.13</td>
-                <td class="premium premium-high">+7.6%</td>
+                <td class="dealer">BullionStar <span class="badge">BEST</span></td>
+                <td class="price">SGD 751.97</td>
+                <td class="premium premium-low">+0.2%</td>
             </tr>
             <tr class="">
-                <td class="dealer">BullionStar</td>
-                <td class="price">SGD 830.47</td>
-                <td class="premium premium-high">+10.6%</td>
+                <td class="dealer">Indigo Precious Metals</td>
+                <td class="price">SGD 808.13</td>
+                <td class="premium premium-high">+7.6%</td>
             </tr>
             <tr class="">
                 <td class="dealer">Silver Bullion</td>
@@ -2196,8 +2428,8 @@ h1 {
         </table>
         
         <div class="summary">
-            <span class="summary-savings">Save SGD 700.42 vs LPM</span>
-            <span class="summary-premium">Premium: SGD 57.32 (7.6% over spot)</span>
+            <span class="summary-savings">Save SGD 756.58 vs LPM</span>
+            <span class="summary-premium">Premium: SGD 1.16 (0.2% over spot)</span>
         </div>
     </div>
     <div class="product-card" data-group="10oz Silver">
@@ -2285,8 +2517,8 @@ h1 {
             </tr>
             <tr class="">
                 <td class="dealer">BullionStar</td>
-                <td class="price">SGD 2,600.14</td>
-                <td class="premium premium-high">+7.7%</td>
+                <td class="price">SGD 2,562.44</td>
+                <td class="premium premium-high">+6.2%</td>
             </tr>
             <tr class="">
                 <td class="dealer">LPM</td>
@@ -2454,14 +2686,14 @@ h1 {
                 <td class="premium premium-high">+6.0%</td>
             </tr>
             <tr class="">
+                <td class="dealer">BullionStar</td>
+                <td class="price">SGD 2,562.44</td>
+                <td class="premium premium-high">+6.2%</td>
+            </tr>
+            <tr class="">
                 <td class="dealer">Silver Bullion</td>
                 <td class="price">SGD 2,580.66</td>
                 <td class="premium premium-high">+6.9%</td>
-            </tr>
-            <tr class="">
-                <td class="dealer">BullionStar</td>
-                <td class="price">SGD 2,597.10</td>
-                <td class="premium premium-high">+7.6%</td>
             </tr>
             <tr class="">
                 <td class="dealer">GoldSilver Central</td>

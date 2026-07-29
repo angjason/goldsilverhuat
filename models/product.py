@@ -1,7 +1,20 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
+
+
+@dataclass
+class Promotion:
+    """A dealer promotion/offer on a product."""
+
+    regular_price: Decimal
+    offer_price: Decimal
+    label: str = "Limited Time Offer"
+
+    @property
+    def discount_pct(self) -> float:
+        return float((self.regular_price - self.offer_price) / self.regular_price * 100)
 
 
 @dataclass
@@ -14,6 +27,7 @@ class ScrapedProduct:
     currency: str = "SGD"
     url: str = ""
     in_stock: bool = True
+    promotion: Promotion | None = None
 
 
 @dataclass
@@ -26,6 +40,7 @@ class NormalizedPrice:
     currency: str
     url: str
     in_stock: bool
+    promotion: Promotion | None = None
 
 
 @dataclass
