@@ -30,6 +30,18 @@ class BullionStarScraper(BaseScraper):
         "/buy/silver-bars",
     ]
 
+    BRAND_FILTERS = re.compile(
+        r"pamp|perth|argor|heraeus|nadir|maple|kangaroo", re.IGNORECASE
+    )
+    EXCLUDE_FILTERS = re.compile(
+        r"400.oz|100.?oz|1000.oz|5.?oz|15.?kg|5.?kg|3.?oz|1.?20.?oz|2.?5g|2g|"
+        r"coca.cola|maradona|lucky.cat|blessing|dragon|phoenix|"
+        r"tiger|rabbit|horse|lunar|numismatic|collectible|circulated|"
+        r"quarter.oz|tenth.oz|half.oz|1-4|1-2|1-10|1-20|"
+        r"quarter.vy|half.vy|various.designs|various.years",
+        re.IGNORECASE,
+    )
+
     async def scrape(self) -> list[ScrapedProduct]:
         product_urls: set[str] = set()
 
@@ -65,6 +77,10 @@ class BullionStarScraper(BaseScraper):
         urls = set()
         for link in links:
             href = link.get("href", "")
+            if not self.BRAND_FILTERS.search(href):
+                continue
+            if self.EXCLUDE_FILTERS.search(href):
+                continue
             if href.startswith("/"):
                 href = f"{self.base_url}{href}"
             urls.add(href)
