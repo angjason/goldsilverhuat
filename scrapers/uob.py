@@ -30,7 +30,7 @@ class UOBScraper(PlaywrightScraper):
 
         try:
             url = f"{self.base_url}{self.PRICE_URL}"
-            html = await self._get_page_content(url, wait_selector="table")
+            html = await self._get_page_content(url, wait_selector="table td")
             products = self._parse_price_table(html)
         except Exception as e:
             logger.error("%s: failed to scrape: %s", self.dealer_name, e)
