@@ -1,13 +1,13 @@
 """Scraper for BullionStar (bullionstar.com).
 
-Prices are dynamically rendered via JavaScript — requires Playwright.
-Products are in table rows: <tr class="pricing-row product-price-update">
-Each row has a link to /buy/product/{slug} and prices in S$ format.
-We take the first price (1-9 qty retail price).
+Prices are extracted from JSON-LD structured data on each product page.
+Product URLs are collected from category listing pages (static HTML).
 """
 
 from __future__ import annotations
 
+import asyncio
+import json
 import logging
 import re
 from decimal import Decimal
@@ -15,15 +15,14 @@ from decimal import Decimal
 from bs4 import BeautifulSoup
 
 from models.product import Promotion, ScrapedProduct
-from scrapers.playwright_base import PlaywrightScraper
+from scrapers.base import BaseScraper
 
 logger = logging.getLogger(__name__)
 
 
-class BullionStarScraper(PlaywrightScraper):
+class BullionStarScraper(BaseScraper):
     dealer_name = "BullionStar"
     base_url = "https://www.bullionstar.com"
-    page_timeout = 90000
 
     CATEGORY_URLS = [
         "/buy/gold-bars",
@@ -32,122 +31,98 @@ class BullionStarScraper(PlaywrightScraper):
     ]
 
     async def scrape(self) -> list[ScrapedProduct]:
-        products: list[ScrapedProduct] = []
+        product_urls: set[str] = set()
 
         for path in self.CATEGORY_URLS:
             try:
                 url = f"{self.base_url}{path}"
-                html = await self._get_page_content(url, wait_selector="td.price")
-                page_products = self._parse_listing(html)
-                products.extend(page_products)
+                html = await self.fetch(url)
+                urls = self._extract_product_urls(html)
+                product_urls.update(urls)
             except Exception as e:
-                logger.error(
-                    "%s: failed to scrape %s: %s",
-                    self.dealer_name,
-                    path,
-                    e,
-                )
+                logger.error("%s: failed to get product list from %s: %s", self.dealer_name, path, e)
+
+        logger.info("%s: found %d product URLs, fetching prices...", self.dealer_name, len(product_urls))
+
+        products = []
+        for url in sorted(product_urls):
+            await asyncio.sleep(1)
+            try:
+                product = await self._fetch_product(url)
+                if product:
+                    products.append(product)
+            except Exception as e:
+                logger.debug("%s: failed to fetch %s: %s", self.dealer_name, url, e)
 
         if not products:
-            logger.warning(
-                "%s: no products found — possible layout change",
-                self.dealer_name,
-            )
+            logger.warning("%s: no products found — possible layout change", self.dealer_name)
 
         return products
 
-    def _parse_listing(self, html: str) -> list[ScrapedProduct]:
+    def _extract_product_urls(self, html: str) -> list[str]:
         soup = BeautifulSoup(html, "lxml")
-        products: list[ScrapedProduct] = []
+        links = soup.select('a[href*="/buy/product/"]')
+        urls = set()
+        for link in links:
+            href = link.get("href", "")
+            if href.startswith("/"):
+                href = f"{self.base_url}{href}"
+            urls.add(href)
+        return list(urls)
 
-        rows = soup.select("tr.pricing-row, tr.product-price-update, tr[class*='pricing-row']")
+    async def _fetch_product(self, url: str) -> ScrapedProduct | None:
+        html = await self.fetch(url)
+        soup = BeautifulSoup(html, "lxml")
 
-        if not rows:
-            rows = soup.select("tr")
-            rows = [r for r in rows if r.select_one("a[href*='/buy/product/']")]
-
-        seen_urls: set[str] = set()
-
-        for row in rows:
+        ld_scripts = soup.select('script[type="application/ld+json"]')
+        for script in ld_scripts:
             try:
-                product = self._parse_row(row)
-                if product and product.url not in seen_urls:
-                    products.append(product)
-                    seen_urls.add(product.url)
-            except Exception as e:
-                logger.debug("Failed to parse row: %s", e)
+                data = json.loads(script.get_text())
+                items = data if isinstance(data, list) else [data]
+                for item in items:
+                    if not isinstance(item, dict) or "offers" not in item:
+                        continue
 
-        return products
+                    name = item.get("name", "").replace("Buy ", "")
+                    offers = item["offers"]
+                    if not offers:
+                        continue
 
-    def _parse_row(self, row) -> ScrapedProduct | None:
-        link = row.select_one("a[href*='/buy/product/']")
-        if not link:
-            return None
+                    offer = offers[0]
+                    price_str = offer.get("price")
+                    if not price_str:
+                        continue
 
-        href = link.get("href", "")
-        url = href if href.startswith("http") else f"{self.base_url}{href}"
+                    price = Decimal(price_str)
+                    if price < 10:
+                        continue
 
-        row_text = row.get_text()
+                    in_stock = "InStock" in str(offer.get("availability", ""))
 
-        name = self._extract_name(row_text, href)
-        if not name:
-            return None
+                    promotion = self._detect_promotion(soup, price)
 
-        price, promotion = self._extract_price_and_promotion(row_text)
-        if price is None:
-            return None
+                    return ScrapedProduct(
+                        dealer=self.dealer_name,
+                        name=name,
+                        price=price,
+                        currency="SGD",
+                        url=url,
+                        in_stock=in_stock,
+                        promotion=promotion,
+                    )
+            except (json.JSONDecodeError, KeyError, TypeError):
+                continue
 
-        in_stock = "in stock" in row_text.lower()
-
-        return ScrapedProduct(
-            dealer=self.dealer_name,
-            name=name,
-            price=price,
-            currency="SGD",
-            url=url,
-            in_stock=in_stock,
-            promotion=promotion,
-        )
-
-    def _extract_name(self, row_text: str, href: str) -> str:
-        """Build product name from URL slug and row text.
-
-        BullionStar row text: '1 troy oz (31.1 gram) - Lady Fortuna Design'
-        URL slug: 'gold-pamp-1oz-lady-fortuna-design'
-        We combine both for a matchable name like:
-        'Gold PAMP 1oz Lady Fortuna Design'
-        """
-        slug = href.split("/")[-1] if "/" in href else href
-        slug_name = slug.replace("-", " ").title()
-
-        lines = [line.strip() for line in row_text.split("\n") if line.strip()]
-        description = ""
-        for line in lines:
-            if "troy oz" in line or "gram" in line or "kg" in line:
-                cleaned = re.sub(r"Limited Time Offer\s*", "", line).strip()
-                if cleaned:
-                    description = cleaned
-                    break
-
-        return f"{slug_name} {description}".strip()
+        return None
 
     @staticmethod
-    def _extract_price_and_promotion(text: str) -> tuple[Decimal | None, Promotion | None]:
-        """Extract price and detect promotions.
+    def _detect_promotion(soup: BeautifulSoup, current_price: Decimal) -> Promotion | None:
+        """Detect if the product page shows a Limited Time Offer."""
+        text = soup.get_text()
+        if "limited time offer" not in text.lower():
+            return None
 
-        BullionStar rows show either:
-        - Tiered pricing: "1-9 S$830.47 / 10-29 S$827.98 / ..." → take first (qty 1)
-        - Promo: "Limited Time Offer ... Regular Price S$830.47 Any Quantity S$751.97"
-
-        "Any Quantity" alone is a bulk discount, NOT a promotion.
-        Only treat as promotion when "Limited Time Offer" is also present.
-
-        Returns (selling_price, promotion_or_None).
-        """
         prices = re.findall(r"S\$([\d,]+\.\d{2})", text)
-        if not prices:
-            return None, None
-
         valid = []
         for p in prices:
             try:
@@ -157,24 +132,13 @@ class BullionStarScraper(PlaywrightScraper):
             except Exception:
                 pass
 
-        if not valid:
-            return None, None
-
-        is_promo = (
-            "limited time offer" in text.lower()
-            and "any quantity" in text.lower()
-            and len(valid) >= 2
-        )
-
-        if is_promo:
+        if len(valid) >= 2:
             regular = max(valid)
-            offer = min(valid)
-            promotion = Promotion(
-                regular_price=regular,
-                offer_price=offer,
-                label="Limited Time Offer",
-            )
-            return offer, promotion
+            if regular > current_price:
+                return Promotion(
+                    regular_price=regular,
+                    offer_price=current_price,
+                    label="Limited Time Offer",
+                )
 
-        # Take the first (highest tier / qty 1) price
-        return valid[0], None
+        return None

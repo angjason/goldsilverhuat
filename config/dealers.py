@@ -24,7 +24,6 @@ DEALERS: list[DealerConfig] = [
         name="BullionStar",
         base_url="https://www.bullionstar.com",
         scraper_module="scrapers.bullionstar",
-        requires_js=True,
     ),
     DealerConfig(
         name="GoldSilver Central",
