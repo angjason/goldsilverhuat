@@ -6,6 +6,7 @@ Fallback: Indigo Precious Metals homepage (has ~0.25% markup over spot).
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import re
 from dataclasses import dataclass
@@ -13,15 +14,11 @@ from decimal import Decimal
 
 import httpx
 
+from config.constants import USER_AGENT
+
 logger = logging.getLogger(__name__)
 
-_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/125.0.0.0 Safari/537.36"
-    )
-}
+_HEADERS = {"User-Agent": USER_AGENT}
 
 
 @dataclass
@@ -29,21 +26,6 @@ class SpotPrices:
     gold_oz: Decimal | None = None
     silver_oz: Decimal | None = None
     source: str = ""
-
-    def gold_per_gram(self) -> Decimal | None:
-        if self.gold_oz is None:
-            return None
-        return self.gold_oz / Decimal("31.1035")
-
-    def silver_per_gram(self) -> Decimal | None:
-        if self.silver_oz is None:
-            return None
-        return self.silver_oz / Decimal("31.1035")
-
-    def silver_per_kg(self) -> Decimal | None:
-        if self.silver_oz is None:
-            return None
-        return self.silver_oz * Decimal("32.1507")
 
 
 async def fetch_spot_prices() -> SpotPrices:
@@ -71,7 +53,6 @@ async def _fetch_from_xe() -> SpotPrices:
                 headers=_HEADERS,
             )
 
-            import asyncio
             resp, resp2 = await asyncio.gather(gold_req, silver_req)
 
             resp.raise_for_status()

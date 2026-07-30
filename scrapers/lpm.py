@@ -7,7 +7,6 @@ Magento-based with .product-item-info selectors. Prices in SG$ format.
 
 from __future__ import annotations
 
-import asyncio
 import logging
 import os
 import re
@@ -152,3 +151,5 @@ class LPMScraper:
             return Decimal(match.group(1).replace(",", ""))
         except Exception:
             return None
+
+Scraper = LPMScraper

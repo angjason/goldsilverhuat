@@ -158,3 +158,5 @@ class BullionStarScraper(BaseScraper):
                 )
 
         return None
+
+Scraper = BullionStarScraper

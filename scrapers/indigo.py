@@ -170,3 +170,5 @@ class IndigoScraper(BaseScraper):
             return price
         except Exception:
             return None
+
+Scraper = IndigoScraper

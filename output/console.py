@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from decimal import Decimal
-
 from models.product import ComparisonResult
 from services.spot_helper import get_spot_for_product
 from services.spot_price import SpotPrices

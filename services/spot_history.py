@@ -12,15 +12,11 @@ from decimal import Decimal
 import httpx
 from bs4 import BeautifulSoup
 
+from config.constants import USER_AGENT
+
 logger = logging.getLogger(__name__)
 
-_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/125.0.0.0 Safari/537.36"
-    )
-}
+_HEADERS = {"User-Agent": USER_AGENT}
 
 
 @dataclass

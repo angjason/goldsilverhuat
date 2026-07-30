@@ -161,3 +161,5 @@ class GoldSilverCentralScraper:
             return Decimal(cleaned)
         except Exception:
             return None
+
+Scraper = GoldSilverCentralScraper

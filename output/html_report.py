@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import re
 from collections import defaultdict
 from datetime import datetime
-from decimal import Decimal
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -48,7 +48,6 @@ def _get_group(canonical_name: str) -> str:
     name_lower = canonical_name.lower()
     metal = "Gold" if "gold" in name_lower else "Silver"
 
-    import re
     weight_match = re.match(r"(\d+(?:oz|g|kg))", name_lower)
     if weight_match:
         return f"{weight_match.group(1)} {metal}"
@@ -130,8 +129,6 @@ def _build_html(
 
 def _sort_groups(groups: list[str]) -> list[str]:
     """Sort groups: gold first, then silver, each by weight ascending."""
-    import re
-
     weight_order = {"1g": 1, "5g": 2, "10g": 3, "20g": 4, "1oz": 5,
                     "50g": 6, "100g": 7, "250g": 8, "500g": 9, "10oz": 10, "1kg": 11}
 

@@ -39,21 +39,10 @@ async def run_scraper(dealer_config) -> list[ScrapedProduct]:
     """Run a single dealer's scraper with error isolation."""
     try:
         module = importlib.import_module(dealer_config.scraper_module)
-        scraper_class = None
-
-        for attr_name in dir(module):
-            attr = getattr(module, attr_name)
-            if (
-                isinstance(attr, type)
-                and hasattr(attr, "scrape")
-                and attr_name != "BaseScraper"
-                and hasattr(attr, "dealer_name")
-            ):
-                scraper_class = attr
-                break
+        scraper_class = getattr(module, "Scraper", None)
 
         if scraper_class is None:
-            logger.error("No scraper class found in %s", dealer_config.scraper_module)
+            logger.error("No Scraper found in %s", dealer_config.scraper_module)
             return []
 
         async with scraper_class() as scraper:

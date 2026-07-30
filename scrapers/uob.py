@@ -95,3 +95,5 @@ class UOBScraper(PlaywrightScraper):
             return Decimal(cleaned)
         except Exception:
             return None
+
+Scraper = UOBScraper

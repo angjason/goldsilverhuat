@@ -7,6 +7,7 @@ from typing import ClassVar
 
 import httpx
 
+from config.constants import USER_AGENT
 from models.product import ScrapedProduct
 
 logger = logging.getLogger(__name__)
@@ -32,13 +33,7 @@ class BaseScraper(abc.ABC):
         self._client = httpx.AsyncClient(
             timeout=httpx.Timeout(self.timeout),
             follow_redirects=True,
-            headers={
-                "User-Agent": (
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/125.0.0.0 Safari/537.36"
-                )
-            },
+            headers={"User-Agent": USER_AGENT},
         )
         return self
 

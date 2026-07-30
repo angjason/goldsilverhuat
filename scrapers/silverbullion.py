@@ -137,3 +137,5 @@ class SilverBullionScraper(BaseScraper):
         if match:
             return match.group(1)
         return ""
+
+Scraper = SilverBullionScraper

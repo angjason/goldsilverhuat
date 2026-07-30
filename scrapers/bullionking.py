@@ -134,3 +134,5 @@ class BullionKingScraper(PlaywrightScraper):
                     continue
 
         return None
+
+Scraper = BullionKingScraper

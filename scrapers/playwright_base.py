@@ -5,10 +5,10 @@ from __future__ import annotations
 import abc
 import asyncio
 import logging
-import os
 from pathlib import Path
 from typing import ClassVar
 
+from config.constants import USER_AGENT
 from models.product import ScrapedProduct
 
 logger = logging.getLogger(__name__)
@@ -52,10 +52,6 @@ class PlaywrightScraper(abc.ABC):
 
         from playwright.async_api import async_playwright
 
-        tmp_dir = Path(__file__).parent.parent / ".tmp"
-        tmp_dir.mkdir(exist_ok=True)
-        os.environ.setdefault("TMPDIR", str(tmp_dir))
-
         self._playwright = await async_playwright().start()
         launch_kwargs = {"headless": True}
         if CHROME_PATH.exists():
@@ -71,13 +67,7 @@ class PlaywrightScraper(abc.ABC):
 
         for attempt in range(1, self.max_retries + 1):
             try:
-                page = await self._browser.new_page(
-                    user_agent=(
-                        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                        "Chrome/125.0.0.0 Safari/537.36"
-                    )
-                )
+                page = await self._browser.new_page(user_agent=USER_AGENT)
                 wait_until = "domcontentloaded" if wait_selector else "networkidle"
                 await page.goto(url, timeout=self.page_timeout, wait_until=wait_until)
 
