@@ -43,6 +43,8 @@ class UOBScraper(PlaywrightScraper):
 
         return products
 
+    EXCLUDE_KEYWORDS = ["savings account", "account", "paper"]
+
     def _parse_price_table(self, html: str) -> list[ScrapedProduct]:
         soup = BeautifulSoup(html, "lxml")
         products: list[ScrapedProduct] = []
@@ -66,6 +68,9 @@ class UOBScraper(PlaywrightScraper):
             if not description or not sell_price_text:
                 continue
 
+            if self._is_non_physical(description):
+                continue
+
             price = self._parse_price(sell_price_text)
             if price is None:
                 continue
@@ -84,6 +89,10 @@ class UOBScraper(PlaywrightScraper):
             )
 
         return products
+
+    def _is_non_physical(self, description: str) -> bool:
+        desc_lower = description.lower()
+        return any(kw in desc_lower for kw in self.EXCLUDE_KEYWORDS)
 
     @staticmethod
     def _parse_price(text: str) -> Decimal | None:
