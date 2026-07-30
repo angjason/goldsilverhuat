@@ -24,6 +24,7 @@ DEALERS: list[DealerConfig] = [
     DealerConfig(name="UOB", scraper_module="scrapers.uob"),
     DealerConfig(name="LPM", scraper_module="scrapers.lpm"),
     DealerConfig(name="Indigo Precious Metals", scraper_module="scrapers.indigo"),
+    DealerConfig(name="Big Bullion", scraper_module="scrapers.bigbullion"),
     DealerConfig(name="BullionKing", scraper_module="scrapers.bullionking"),
 ]
 
