@@ -5,19 +5,12 @@ from __future__ import annotations
 import abc
 import asyncio
 import logging
-from pathlib import Path
 from typing import ClassVar
 
-from config.constants import USER_AGENT
+from config.constants import CHROME_PATH, USER_AGENT
 from models.product import ScrapedProduct
 
 logger = logging.getLogger(__name__)
-
-CHROME_PATH = (
-    Path.home()
-    / "Library/Caches/ms-playwright/chromium-1228"
-    / "chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
-)
 
 
 class PlaywrightScraper(abc.ABC):

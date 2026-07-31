@@ -16,8 +16,8 @@ from typing import ClassVar
 
 from bs4 import BeautifulSoup
 
+from config.constants import CHROME_PATH
 from models.product import ScrapedProduct
-from scrapers.playwright_base import CHROME_PATH
 from scrapers.utils import resolve_url
 
 logger = logging.getLogger(__name__)

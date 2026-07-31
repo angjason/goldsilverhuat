@@ -7,6 +7,7 @@ Prices auto-refresh based on spot.
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import re
 from decimal import Decimal
@@ -88,7 +89,6 @@ class IndigoScraper(BaseScraper):
         The listing page shows the bulk discount (10+ qty) price.
         The detail page has itemprop="price" content="X" with the Tier 1 price.
         """
-        import asyncio
 
         for product in products:
             if not product.url:

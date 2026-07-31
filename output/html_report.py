@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from config.constants import TIMEZONE
 from models.product import ComparisonResult
 from services.spot_helper import get_spot_for_product
 from services.spot_history import SpotDataPoint
@@ -31,7 +32,7 @@ def export_html(
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    timestamp = datetime.now(ZoneInfo("Asia/Singapore"))
+    timestamp = datetime.now(ZoneInfo(TIMEZONE))
     if filename is None:
         filename = f"prices_{timestamp:%Y%m%d_%H%M%S}.html"
     elif not filename.endswith(".html"):
