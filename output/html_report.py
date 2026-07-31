@@ -145,6 +145,7 @@ def _build_html(
     <header class="header">
         <div class="header-top">
             <h1>SG Bullion Prices</h1>
+            <p class="tagline">Because gold is gold, and silver is silver. I care about nothing but the price.</p>
             <span class="timestamp">{timestamp:%d %b %Y, %H:%M} SGT</span>
         </div>
         {failed_html}
@@ -639,6 +640,12 @@ h1 {
     font-weight: 800;
     letter-spacing: -0.02em;
     color: #0f172a;
+}
+.tagline {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-style: italic;
+    margin: 0.25rem 0 0.5rem;
 }
 .timestamp {
     font-size: 0.8rem;
