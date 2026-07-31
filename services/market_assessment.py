@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 def generate_assessment(
     spot: SpotPrices | None,
     history: list[SpotDataPoint] | None,
-    avg_premiums: dict[str, float] | None = None,
 ) -> str | None:
     """Generate a market assessment using Google Gemini.
 
@@ -31,7 +30,7 @@ def generate_assessment(
 
         client = genai.Client(api_key=api_key)
 
-        prompt = _build_prompt(spot, history, avg_premiums)
+        prompt = _build_prompt(spot, history)
 
         response = client.models.generate_content(
             model="gemini-2.0-flash",
@@ -48,7 +47,6 @@ def generate_assessment(
 def _build_prompt(
     spot: SpotPrices | None,
     history: list[SpotDataPoint] | None,
-    avg_premiums: dict[str, float] | None,
 ) -> str:
     parts = []
     parts.append(
@@ -72,10 +70,5 @@ def _build_prompt(
             gold_str = f"Gold: {point.gold_sgd:,.2f}" if point.gold_sgd else "Gold: N/A"
             silver_str = f"Silver: {point.silver_sgd:,.2f}" if point.silver_sgd else "Silver: N/A"
             parts.append(f"  {point.date}: {gold_str}, {silver_str}")
-
-    if avg_premiums:
-        parts.append(f"\nAverage dealer premiums over spot:")
-        for product, pct in avg_premiums.items():
-            parts.append(f"  {product}: {pct:.1f}%")
 
     return "\n".join(parts)

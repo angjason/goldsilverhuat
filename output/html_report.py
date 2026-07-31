@@ -582,6 +582,10 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function toggleExpand(btn) {
+    if (!btn.dataset.original) {
+        btn.dataset.original = btn.textContent;
+    }
+
     const card = btn.closest('.product-card');
     const hidden = card.querySelectorAll('.hidden-row');
     const isExpanded = btn.classList.contains('expanded');
@@ -592,9 +596,6 @@ function toggleExpand(btn) {
 
     btn.classList.toggle('expanded');
     btn.textContent = isExpanded ? btn.dataset.original : 'Show less';
-    if (!btn.dataset.original) {
-        btn.dataset.original = btn.textContent;
-    }
 }
 """
 
