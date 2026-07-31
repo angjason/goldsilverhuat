@@ -214,14 +214,13 @@ def _top_deals_section(results: list[ComparisonResult], spot: SpotPrices | None)
         for i, (name, dealer, price, pct, url) in enumerate(deals):
             medal = ["&#129351;", "&#129352;", "&#129353;"][i]
             dealer_link = f'<a href="{url}" target="_blank">{dealer}</a>' if url else dealer
-            pct_class = "premium-low" if pct <= 3 else "premium-mid" if pct <= 5 else "premium-high"
             rows.append(f"""
                 <tr>
                     <td class="td-rank">{medal}</td>
                     <td class="td-product">{name}</td>
                     <td class="td-dealer">{dealer_link}</td>
                     <td class="td-price">SGD {price:,.2f}</td>
-                    <td class="td-premium {pct_class}">{pct:+.1f}%</td>
+                    <td class="td-premium premium-high">{pct:+.1f}%</td>
                 </tr>""")
         sections.append(f"""
         <div class="top-deals-group">
