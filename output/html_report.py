@@ -117,6 +117,7 @@ def _build_html(
 
     spot_html = _spot_hero(spot, history) if spot else ""
     assessment_html = _assessment_section(assessment) if assessment else ""
+    top_deals_html = _top_deals_section(results, spot) if spot else ""
     chart_html = _chart_section(history) if history else ""
     promo_html = _promotions_section(results)
     failed_html = ""
@@ -150,6 +151,7 @@ def _build_html(
 
     {spot_html}
     {assessment_html}
+    {top_deals_html}
     {chart_html}
     {promo_html}
 
@@ -172,6 +174,67 @@ def _build_html(
 </script>
 </body>
 </html>"""
+
+
+def _top_deals_section(results: list[ComparisonResult], spot: SpotPrices | None) -> str:
+    """Show the top 3 lowest-premium products (brand-neutral only)."""
+    if not spot:
+        return ""
+
+    deals = []
+    for result in results:
+        if not re.search(r"\(any\)", result.canonical_name, re.IGNORECASE):
+            continue
+
+        cheapest = result.cheapest
+        if not cheapest:
+            continue
+
+        spot_price = get_spot_for_product(result.canonical_name, spot)
+        if not spot_price or spot_price <= 0:
+            continue
+
+        premium_pct = float((cheapest.price - spot_price) / spot_price * 100)
+        deals.append((result.canonical_name, cheapest.dealer, cheapest.price, premium_pct, cheapest.url))
+
+    deals.sort(key=lambda x: x[3])
+    top = deals[:3]
+
+    if not top:
+        return ""
+
+    rows = []
+    for i, (name, dealer, price, pct, url) in enumerate(top):
+        medal = ["&#129351;", "&#129352;", "&#129353;"][i]
+        dealer_link = f'<a href="{url}" target="_blank">{dealer}</a>' if url else dealer
+        pct_class = "premium-low" if pct <= 3 else "premium-mid" if pct <= 5 else "premium-high"
+        rows.append(f"""
+            <tr>
+                <td class="td-rank">{medal}</td>
+                <td class="td-product">{name}</td>
+                <td class="td-dealer">{dealer_link}</td>
+                <td class="td-price">SGD {price:,.2f}</td>
+                <td class="td-premium {pct_class}">{pct:+.1f}%</td>
+            </tr>""")
+
+    return f"""
+    <section class="top-deals-section">
+        <h2>Top Deals — Lowest Premium</h2>
+        <table class="top-deals-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Product</th>
+                    <th>Dealer</th>
+                    <th>Price</th>
+                    <th>Premium</th>
+                </tr>
+            </thead>
+            <tbody>
+                {"".join(rows)}
+            </tbody>
+        </table>
+    </section>"""
 
 
 def _assessment_section(assessment: str) -> str:
@@ -599,6 +662,60 @@ h1 {
     font-size: 0.7rem;
     font-weight: 700;
     flex-shrink: 0;
+}
+
+/* Top Deals */
+.top-deals-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.top-deals-section h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1rem;
+}
+.top-deals-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.top-deals-table th {
+    text-align: left;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 0.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+.top-deals-table th:nth-child(4),
+.top-deals-table th:nth-child(5) { text-align: right; }
+.top-deals-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f8fafc;
+}
+.top-deals-table .td-rank { font-size: 1.2rem; width: 2rem; }
+.top-deals-table .td-product { font-weight: 600; color: #1e293b; }
+.top-deals-table .td-dealer a {
+    color: #64748b;
+    text-decoration: none;
+    border-bottom: 1px dashed #cbd5e1;
+}
+.top-deals-table .td-dealer a:hover { color: #2563eb; border-color: #2563eb; }
+.top-deals-table .td-price {
+    text-align: right;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+.top-deals-table .td-premium {
+    text-align: right;
+    font-weight: 700;
+    font-size: 0.85rem;
 }
 
 /* Assessment */
