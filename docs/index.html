@@ -3,327 +3,492 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bullion Price Comparison — 31 Jul 2026 13:00</title>
+<title>SG Bullion Prices — 31 Jul 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <style>
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f5f5f7;
-    color: #1d1d1f;
-    padding: 2rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8fafc;
+    color: #0f172a;
     line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
-.container { max-width: 800px; margin: 0 auto; }
-h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
+
+.dashboard {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
 }
-.timestamp {
-    color: #6e6e73;
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-}
-.filter-bar {
+
+/* Header */
+.header { margin-bottom: 1.5rem; }
+.header-top {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-.filter-bar label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #6e6e73;
-}
-.filter-bar select {
-    font-size: 0.95rem;
-    padding: 0.5rem 1rem;
-    border: 1px solid #e5e5ea;
-    border-radius: 8px;
-    background: #f5f5f7;
-    color: #1d1d1f;
-    font-weight: 500;
-    cursor: pointer;
-    outline: none;
-}
-.filter-bar select:focus {
-    border-color: #007aff;
-    box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
-}
-.failed-notice {
-    background: #fff3f3;
-    border: 1px solid #ffcdd2;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    margin-bottom: 1.5rem;
-    color: #c62828;
-    font-size: 0.9rem;
-}
-.promo-card {
-    background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
-    border: 1px solid #ffd54f;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-.promo-card h2 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: #e65100;
-}
-.promo-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.promo-table th {
-    text-align: left;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #6e6e73;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.5rem 0.5rem;
-    border-bottom: 1px solid #ffe082;
-}
-.promo-table td {
-    padding: 0.6rem 0.5rem;
-    border-bottom: 1px solid #fff3cd;
-    font-size: 0.9rem;
-}
-.promo-product { font-weight: 500; }
-.promo-dealer { color: #6e6e73; }
-.promo-regular { color: #8e8e93; }
-.promo-offer { font-weight: 700; color: #1d1d1f; }
-.promo-discount {
-    font-weight: 700;
-    color: #e65100;
-    text-align: right;
-}
-.chart-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-.chart-card h2 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-}
-.chart-tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-.chart-tab {
-    padding: 0.4rem 1rem;
-    border: 1px solid #e5e5ea;
-    border-radius: 8px;
-    background: #f5f5f7;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    color: #6e6e73;
-    transition: all 0.15s;
-}
-.chart-tab.active {
-    background: #1d1d1f;
-    color: #fff;
-    border-color: #1d1d1f;
-}
-.chart-container {
-    height: 280px;
-    position: relative;
-}
-.group-section {
-    margin-bottom: 2rem;
-}
-.group-heading {
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e5e5ea;
-    color: #1d1d1f;
-}
-.spot-card {
-    background: #1d1d1f;
-    color: #f5f5f7;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-.spot-card h2 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-}
-.spot-card .unit { font-weight: 400; color: #a1a1a6; }
-.spot-table { width: 100%; }
-.spot-table td {
-    padding: 0.4rem 0;
-    font-size: 1rem;
-}
-.spot-table .price {
-    text-align: right;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-}
-.source {
-    margin-top: 0.75rem;
-    font-size: 0.8rem;
-    color: #a1a1a6;
-}
-.product-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-.product-card h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: #1d1d1f;
-}
-.price-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.price-table th {
-    text-align: left;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #6e6e73;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #e5e5ea;
-}
-.price-table th:nth-child(2),
-.price-table th:nth-child(3) { text-align: right; }
-.price-table td {
-    padding: 0.6rem 0;
-    border-bottom: 1px solid #f2f2f7;
-    font-size: 0.95rem;
-}
-.price-table .dealer { font-weight: 500; }
-.price-table .dealer a, .promo-dealer a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px dashed rgba(0,0,0,0.3);
-}
-.price-table .dealer a:hover, .promo-dealer a:hover {
-    border-bottom-style: solid;
-    color: #2563eb;
-}
-.price-table .price {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    font-weight: 500;
-}
-.price-table .premium {
-    text-align: right;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-.premium-low { color: #34c759; }
-.premium-mid { color: #ff9500; }
-.premium-high { color: #ff3b30; }
-.oos { color: #8e8e93; font-style: italic; font-size: 0.8rem; }
-.oos-row td { color: #8e8e93; }
-.cheapest-row td { color: #1d1d1f; }
-.cheapest-row .price { font-weight: 700; }
-.badge {
-    display: inline-block;
-    background: #34c759;
-    color: #fff;
-    font-size: 0.65rem;
-    font-weight: 700;
-    padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    margin-left: 0.5rem;
-    vertical-align: middle;
-}
-.summary {
-    margin-top: 1rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid #e5e5ea;
-    display: flex;
+    align-items: baseline;
     justify-content: space-between;
-    align-items: center;
     flex-wrap: wrap;
     gap: 0.5rem;
 }
-.summary-savings {
-    font-weight: 600;
-    color: #34c759;
-    font-size: 0.9rem;
+h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0f172a;
 }
-.summary-premium {
+.timestamp {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #64748b;
+    background: #e2e8f0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+}
+
+.failed-notice {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    margin-top: 1rem;
+    color: #991b1b;
     font-size: 0.85rem;
-    color: #6e6e73;
 }
-@media (max-width: 600px) {
-    body { padding: 1rem; }
-    .summary { flex-direction: column; align-items: flex-start; }
-    .filter-bar { flex-direction: column; align-items: flex-start; }
+.failed-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #dc2626;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* Assessment */
+.assessment-section {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 1px solid #bae6fd;
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.assessment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+.assessment-icon {
+    font-size: 1.1rem;
+    color: #0284c7;
+}
+.assessment-header h2 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0c4a6e;
+    margin: 0;
+}
+.assessment-text {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #1e293b;
+}
+.assessment-disclaimer {
+    display: block;
+    margin-top: 0.75rem;
+    font-size: 0.7rem;
+    color: #64748b;
+    font-style: italic;
+}
+
+/* Spot Hero */
+.spot-hero {
+    margin-bottom: 1.5rem;
+}
+.spot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+.spot-item {
+    background: #0f172a;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.spot-gold { border-top: 3px solid #d97706; }
+.spot-silver { border-top: 3px solid #94a3b8; }
+.spot-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+}
+.spot-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #f8fafc;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+.spot-unit {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+.spot-change {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+.change-up { color: #22c55e; }
+.change-down { color: #ef4444; }
+.spot-source {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.75rem;
+}
+
+/* Chart */
+.chart-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.chart-section h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #334155;
+}
+.chart-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+.chart-box {
+    position: relative;
+    height: 200px;
+}
+.chart-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.chart-box canvas {
+    margin-top: 1.25rem;
+}
+
+/* Promotions */
+.promo-section {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1px solid #fde68a;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.promo-section h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 1rem;
+}
+.promo-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.promo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: rgba(255,255,255,0.7);
+    border-radius: 10px;
+}
+.promo-info { display: flex; flex-direction: column; gap: 0.15rem; }
+.promo-product { font-weight: 600; font-size: 0.9rem; color: #1e293b; }
+.promo-dealer { font-size: 0.8rem; color: #64748b; }
+.promo-dealer a { color: inherit; text-decoration: none; border-bottom: 1px dashed #94a3b8; }
+.promo-dealer a:hover { color: #2563eb; border-color: #2563eb; }
+.promo-prices { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+.promo-regular { font-size: 0.8rem; color: #94a3b8; text-decoration: line-through; }
+.promo-offer { font-size: 0.95rem; font-weight: 700; color: #1e293b; }
+.promo-badge {
+    background: #dc2626;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+}
+
+/* Filter Bar */
+.filter-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #f8fafc;
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+    transition: box-shadow 0.2s, padding 0.2s;
+}
+.filter-bar.stuck {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 0.75rem 1rem;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    border-radius: 0 0 12px 12px;
+    background: rgba(248,250,252,0.95);
+    backdrop-filter: blur(8px);
+}
+.filter-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.weight-row { margin-top: 0.5rem; }
+.pill {
+    padding: 0.4rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 100px;
+    background: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.pill:hover { border-color: #cbd5e1; background: #f1f5f9; }
+.pill.active {
+    background: #0f172a;
+    color: #fff;
+    border-color: #0f172a;
+}
+.pill-gold.active { background: #d97706; border-color: #d97706; }
+.pill-silver.active { background: #64748b; border-color: #64748b; }
+
+/* Product Cards */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1rem;
+}
+.group-heading {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e2e8f0;
+    color: #1e293b;
+}
+.group-section { margin-bottom: 2rem; }
+
+.product-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s;
+}
+.product-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
+}
+.card-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.card-table th {
+    text-align: left;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+.card-table th:nth-child(2),
+.card-table th:nth-child(3) { text-align: right; }
+.card-table td {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f8fafc;
+}
+.td-dealer { font-weight: 500; }
+.td-dealer a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(0,0,0,0.2);
+}
+.td-dealer a:hover { color: #2563eb; border-color: #2563eb; }
+.td-price {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+}
+.td-premium {
+    text-align: right;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.premium-low { color: #22c55e; }
+.premium-mid { color: #f59e0b; }
+.premium-high { color: #ef4444; }
+.oos { color: #94a3b8; font-style: italic; font-size: 0.75rem; }
+.oos-row td { color: #cbd5e1; }
+
+.cheapest-row td { color: #0f172a; }
+.cheapest-row .td-price {
+    font-weight: 800;
+    font-size: 0.95rem;
+}
+.best-badge {
+    display: inline-block;
+    background: #22c55e;
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+}
+.hidden-row { display: none; }
+
+.expand-btn {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.4rem;
+    border: 1px dashed #e2e8f0;
+    border-radius: 8px;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.expand-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+.card-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.card-savings {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #22c55e;
+}
+.card-premium {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .dashboard { padding: 1rem; }
+    h1 { font-size: 1.4rem; }
+    .spot-grid { grid-template-columns: 1fr; }
+    .spot-value { font-size: 1.4rem; }
+    .chart-wrapper { grid-template-columns: 1fr; }
+    .chart-box { height: 180px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .filter-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 0.25rem; }
+    .filter-bar.stuck { margin-left: -1rem; margin-right: -1rem; }
+    .promo-item { flex-direction: column; align-items: flex-start; }
+    .promo-prices { margin-top: 0.25rem; }
 }
 
 </style>
 </head>
 <body>
-<div class="container">
-    <h1>Bullion Price Comparison</h1>
-    <p class="timestamp">Generated: Friday, 31 July 2026 at 13:00:05 SGT</p>
+<div class="dashboard">
+    <header class="header">
+        <div class="header-top">
+            <h1>SG Bullion Prices</h1>
+            <span class="timestamp">31 Jul 2026, 21:59 SGT</span>
+        </div>
+        <div class="failed-notice"><span class="failed-icon">!</span> <strong>Data unavailable:</strong> BullionStar, GoldSilver Central, Silver Bullion, Indigo Precious Metals</div>
+    </header>
+
     
-    <div class="failed-notice">
-        <strong>Data unavailable:</strong> BullionStar, GoldSilver Central, Silver Bullion, Indigo Precious Metals
-    </div>
-    
-    <div class="spot-card">
-        <h2>Spot Prices <span class="unit">(per troy oz)</span></h2>
-        <table class="spot-table">
+    <section class="spot-hero">
+        <div class="spot-grid">
             
-        </table>
-        <p class="source">Source: </p>
-    </div>
+            
+        </div>
+        <p class="spot-source">Source: </p>
+    </section>
     
-    <div class="chart-card">
-        <h2>Spot Price — 12 Month Trend</h2>
-        <div class="chart-tabs">
-            <button class="chart-tab active" onclick="showChart('gold')">Gold</button>
-            <button class="chart-tab" onclick="showChart('silver')">Silver</button>
+    
+    <section class="chart-section">
+        <h2>12-Month Spot Trend</h2>
+        <div class="chart-wrapper">
+            <div class="chart-box">
+                <span class="chart-label">Gold (SGD/oz)</span>
+                <canvas id="goldChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <span class="chart-label">Silver (SGD/oz)</span>
+                <canvas id="silverChart"></canvas>
+            </div>
         </div>
-        <div class="chart-container" id="chart-gold">
-            <canvas id="goldChart"></canvas>
-        </div>
-        <div class="chart-container" id="chart-silver" style="display:none;">
-            <canvas id="silverChart"></canvas>
-        </div>
-    </div>
+    </section>
     <script>
     (function() {
         const labels = ["2025-08-05","2025-09-04","2025-10-04","2025-11-03","2025-12-03","2026-01-02","2026-02-01","2026-03-03","2026-04-02","2026-05-02","2026-06-01","2026-07-01","2026-07-31"];
         const goldData = [null,null,null,null,null,null,null,null,null,null,null,null,null];
         const silverData = [null,null,null,null,null,null,null,null,null,null,null,null,null];
 
-        const chartOpts = {
+        const baseOpts = {
             responsive: true,
             maintainAspectRatio: false,
             interaction: { intersect: false, mode: 'index' },
             plugins: {
                 legend: { display: false },
                 tooltip: {
+                    backgroundColor: '#1e293b',
+                    titleFont: { family: 'Inter' },
+                    bodyFont: { family: 'Inter' },
+                    padding: 12,
+                    cornerRadius: 8,
                     callbacks: {
                         label: ctx => 'SGD ' + ctx.parsed.y.toLocaleString(undefined, {minimumFractionDigits: 2})
                     }
@@ -331,18 +496,25 @@ h1 {
             },
             scales: {
                 x: {
+                    border: { display: false },
                     grid: { display: false },
                     ticks: {
+                        font: { family: 'Inter', size: 11 },
+                        color: '#94a3b8',
+                        maxRotation: 0,
                         callback: function(val, idx) {
                             const d = new Date(labels[idx]);
-                            return d.toLocaleDateString('en-SG', {month: 'short', year: '2-digit'});
+                            return d.toLocaleDateString('en-SG', {month: 'short'});
                         }
                     }
                 },
                 y: {
-                    grid: { color: '#f2f2f7' },
+                    border: { display: false },
+                    grid: { color: '#f1f5f9' },
                     ticks: {
-                        callback: val => 'SGD ' + val.toLocaleString()
+                        font: { family: 'Inter', size: 11 },
+                        color: '#94a3b8',
+                        callback: val => val.toLocaleString()
                     }
                 }
             }
@@ -354,15 +526,17 @@ h1 {
                 labels: labels,
                 datasets: [{
                     data: goldData,
-                    borderColor: '#D4AF37',
-                    backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                    borderColor: '#d97706',
+                    backgroundColor: 'rgba(217, 119, 6, 0.08)',
                     fill: true,
-                    tension: 0.3,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#D4AF37',
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#d97706',
+                    pointBorderWidth: 0,
+                    borderWidth: 2.5,
                 }]
             },
-            options: chartOpts
+            options: baseOpts
         });
 
         new Chart(document.getElementById('silverChart'), {
@@ -371,984 +545,932 @@ h1 {
                 labels: labels,
                 datasets: [{
                     data: silverData,
-                    borderColor: '#8E8E93',
-                    backgroundColor: 'rgba(142, 142, 147, 0.1)',
+                    borderColor: '#64748b',
+                    backgroundColor: 'rgba(100, 116, 139, 0.08)',
                     fill: true,
-                    tension: 0.3,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#8E8E93',
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#64748b',
+                    pointBorderWidth: 0,
+                    borderWidth: 2.5,
                 }]
             },
-            options: chartOpts
+            options: baseOpts
         });
     })();
-
-    function showChart(metal) {
-        document.getElementById('chart-gold').style.display = metal === 'gold' ? '' : 'none';
-        document.getElementById('chart-silver').style.display = metal === 'silver' ? '' : 'none';
-        document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
-    }
     </script>
     
-    <div class="filter-bar">
-        <label for="group-filter">Filter by size:</label>
-        <select id="group-filter" onchange="filterGroup(this.value)">
-            <option value="all">All Products</option><option value="1g Gold">1g Gold</option><option value="5g Gold">5g Gold</option><option value="10g Gold">10g Gold</option><option value="20g Gold">20g Gold</option><option value="1oz Gold">1oz Gold</option><option value="50g Gold">50g Gold</option><option value="100g Gold">100g Gold</option><option value="1oz Silver">1oz Silver</option><option value="100g Silver">100g Silver</option><option value="10oz Silver">10oz Silver</option><option value="1kg Silver">1kg Silver</option>
-        </select>
+
+    <div class="filter-bar" id="filter-bar">
+        <div class="filter-row">
+            <button class="pill active" data-filter="all">All</button><button class="pill pill-gold" data-filter="gold">Gold</button><button class="pill pill-silver" data-filter="silver">Silver</button>
+        </div>
+        <div class="filter-row weight-row">
+            <button class="pill pill-weight active" data-weight="all">All sizes</button>
+            <button class="pill pill-weight" data-weight="1g">1g</button><button class="pill pill-weight" data-weight="5g">5g</button><button class="pill pill-weight" data-weight="10g">10g</button><button class="pill pill-weight" data-weight="20g">20g</button><button class="pill pill-weight" data-weight="1oz">1oz</button><button class="pill pill-weight" data-weight="50g">50g</button><button class="pill pill-weight" data-weight="100g">100g</button><button class="pill pill-weight" data-weight="10oz">10oz</button><button class="pill pill-weight" data-weight="1kg">1kg</button>
+        </div>
     </div>
-    <div class="group-section" data-group="1g Gold"><h2 class="group-heading">1g Gold</h2>
-    <div class="product-card" data-group="1g Gold">
-        <h3>1g PAMP Gold Bar</h3>
-        <table class="price-table">
+
+    <main class="main-content">
+        <div class="group-section" data-metal="gold" data-weight="1g"><h2 class="group-heading">1g Gold</h2><div class="cards-grid">
+    <div class="product-card">
+        <h3 class="card-title">1g PAMP Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://bullionking.sg/product/pamp-1-g-gold-bar/" target="_blank">BullionKing</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 207.22</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://bullionking.sg/product/pamp-1-g-gold-bar/" target="_blank">BullionKing</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 204.85</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
-                <td class="price">SGD 210.00</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
+                <td class="td-price">SGD 208.00</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 2.78 vs UOB</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 3.15</span>
             
         </div>
     </div>
-    <div class="product-card" data-group="1g Gold">
-        <h3>1g Perth Mint Gold Bar</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">1g Perth Mint Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/1-gram-perth-mint-9999-gold-bar-in-assay.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 224.46</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/1-gram-perth-mint-9999-gold-bar-in-assay.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 222.92</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        
         
     </div>
-    <div class="product-card" data-group="1g Gold">
-        <h3>1g Argor-Heraeus Gold Bar</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">1g Argor-Heraeus Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/1-gram-argor-heraeus-minted-bar-9999-gold-bar.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 231.56</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/1-gram-argor-heraeus-9999-gold-kine-bar.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 236.46</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        
         
     </div>
-    <div class="product-card" data-group="1g Gold">
-        <h3>1g Gold Bar (any brand)</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">1g Gold Bar (any brand)</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 169.78</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 168.34</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bullionking.sg/product/pamp-1-g-gold-bar/" target="_blank">BullionKing</a></td>
-                <td class="price">SGD 207.22</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bullionking.sg/product/pamp-1-g-gold-bar/" target="_blank">BullionKing</a></td>
+                <td class="td-price">SGD 204.85</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/1-gram-perth-mint-9999-gold-bar-in-assay.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 224.46</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/1-gram-perth-mint-9999-gold-bar-in-assay.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 222.92</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 54.68 vs LPM</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 54.58</span>
             
         </div>
-    </div></div><div class="group-section" data-group="5g Gold"><h2 class="group-heading">5g Gold</h2>
-    <div class="product-card" data-group="5g Gold">
-        <h3>5g PAMP Gold Bar</h3>
-        <table class="price-table">
+    </div></div></div><div class="group-section" data-metal="gold" data-weight="5g"><h2 class="group-heading">5g Gold</h2><div class="cards-grid">
+    <div class="product-card">
+        <h3 class="card-title">5g PAMP Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 917.00</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 910.00</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/5g-pamp-suisse-horse-gold-minted-bar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 1,019.66</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/5g-pamp-suisse-horse-gold-minted-bar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 1,007.73</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bullionking.sg/product/5-gram-pamp-suisse-buddha-gold-minted-bar/" target="_blank">BullionKing</a></td>
-                <td class="price">SGD 1,120.46</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bullionking.sg/product/5-gram-pamp-suisse-buddha-gold-minted-bar/" target="_blank">BullionKing</a></td>
+                <td class="td-price">SGD 1,107.63</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/5g-pamp-suisse-arabian-horse-9999-gold-proof-like-bar-with-frame.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 1,286.79</td>
-                <td class="premium "></td>
+            <tr class=" hidden-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/5g-pamp-suisse-arabian-horse-9999-gold-proof-like-bar-with-frame.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 1,279.06</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        <button class="expand-btn" onclick="toggleExpand(this)">Show 1 more</button>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 369.79 vs LPM</span>
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 369.06</span>
             
         </div>
     </div>
-    <div class="product-card" data-group="5g Gold">
-        <h3>5g Gold Bar (any brand)</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">5g Gold Bar (any brand)</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 917.00</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 910.00</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/5g-pamp-suisse-horse-gold-minted-bar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 1,019.66</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/2026-5-gram-fifa-world-cup-9999-gold-bar.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 987.43</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bullionking.sg/product/5-gram-pamp-suisse-buddha-gold-minted-bar/" target="_blank">BullionKing</a></td>
-                <td class="price">SGD 1,120.46</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/5g-pamp-suisse-horse-gold-minted-bar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 1,007.73</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/5g-pamp-suisse-arabian-horse-9999-gold-proof-like-bar-with-frame.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 1,286.79</td>
-                <td class="premium "></td>
+            <tr class=" hidden-row" style="">
+                <td class="td-dealer"><a href="https://bullionking.sg/product/5-gram-pamp-suisse-buddha-gold-minted-bar/" target="_blank">BullionKing</a></td>
+                <td class="td-price">SGD 1,107.63</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        <button class="expand-btn" onclick="toggleExpand(this)">Show 1 more</button>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 369.79 vs LPM</span>
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 197.63</span>
             
         </div>
-    </div></div><div class="group-section" data-group="10g Gold"><h2 class="group-heading">10g Gold</h2>
-    <div class="product-card" data-group="10g Gold">
-        <h3>10g PAMP Gold Bar</h3>
-        <table class="price-table">
+    </div></div></div><div class="group-section" data-metal="gold" data-weight="10g"><h2 class="group-heading">10g Gold</h2><div class="cards-grid">
+    <div class="product-card">
+        <h3 class="card-title">10g PAMP Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/10g-pamp-suisse-lady-fortuna-gold-bar" target="_blank">Big Bullion</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 1,820.99</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/10g-pamp-suisse-lady-fortuna-gold-bar" target="_blank">Big Bullion</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 1,799.68</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
-                <td class="price">SGD 1,833.00</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
+                <td class="td-price">SGD 1,819.00</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 12.01 vs UOB</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 19.32</span>
             
         </div>
     </div>
-    <div class="product-card" data-group="10g Gold">
-        <h3>10g Argor-Heraeus Gold Bar</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">10g Argor-Heraeus Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
-                <td class="price">SGD 1,797.00</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
+                <td class="td-price">SGD 1,783.00</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="oos-row">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/10g-argor-heraeus-dragon-minted-bar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 1,839.66</td>
-                <td class="premium oos">OUT OF STOCK</td>
+            <tr class="oos-row hidden-row">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/10g-argor-heraeus-dragon-minted-bar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 1,818.13</td>
+                <td class="td-premium oos">OUT OF STOCK</td>
             </tr>
             </tbody>
         </table>
+        <button class="expand-btn" onclick="toggleExpand(this)">Show 1 more</button>
         
     </div>
-    <div class="product-card" data-group="10g Gold">
-        <h3>10g Gold Bar (any brand)</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">10g Gold Bar (any brand)</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/10g-pamp-suisse-lady-fortuna-gold-bar" target="_blank">Big Bullion</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 1,820.99</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/2026-10-gram-fifa-world-cup-9999-gold-bar.html" target="_blank">LPM</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 1,776.48</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
-                <td class="price">SGD 1,833.00</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/10g-pamp-suisse-lady-fortuna-gold-bar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 1,799.68</td>
+                <td class="td-premium "></td>
+            </tr>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
+                <td class="td-price">SGD 1,819.00</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 12.01 vs UOB</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 42.52</span>
             
         </div>
-    </div></div><div class="group-section" data-group="20g Gold"><h2 class="group-heading">20g Gold</h2>
-    <div class="product-card" data-group="20g Gold">
-        <h3>20g PAMP Gold Bar</h3>
-        <table class="price-table">
+    </div></div></div><div class="group-section" data-metal="gold" data-weight="20g"><h2 class="group-heading">20g Gold</h2><div class="cards-grid">
+    <div class="product-card">
+        <h3 class="card-title">20g PAMP Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 3,478.00</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 3,449.00</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/20g-pamp-lady-fortuna-gold-bar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 3,566.85</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/20g-pamp-lady-fortuna-gold-bar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 3,525.11</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 88.85 vs Big Bullion</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 76.11</span>
             
         </div>
     </div>
-    <div class="product-card" data-group="20g Gold">
-        <h3>20g Argor-Heraeus Gold Bar</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">20g Argor-Heraeus Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/20g-argor-heraeus-kinebar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 3,555.74</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/20g-argor-heraeus-kinebar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 3,514.12</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        
         
     </div>
-    <div class="product-card" data-group="20g Gold">
-        <h3>20g Gold Bar (any brand)</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">20g Gold Bar (any brand)</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 3,478.00</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 3,449.00</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/20g-argor-heraeus-kinebar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 3,555.74</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/2026-20-gram-fifa-world-cup-9999-gold-bar.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 3,471.70</td>
+                <td class="td-premium "></td>
+            </tr>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/20g-argor-heraeus-kinebar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 3,514.12</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 77.74 vs Big Bullion</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 65.12</span>
             
         </div>
-    </div></div><div class="group-section" data-group="1oz Gold"><h2 class="group-heading">1oz Gold</h2>
-    <div class="product-card" data-group="1oz Gold">
-        <h3>1oz PAMP Gold Bar</h3>
-        <table class="price-table">
+    </div></div></div><div class="group-section" data-metal="gold" data-weight="1oz"><h2 class="group-heading">1oz Gold</h2><div class="cards-grid">
+    <div class="product-card">
+        <h3 class="card-title">1oz PAMP Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 5,436.00</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 5,391.00</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/1-oz-pamp-suisse-lady-fortuna-with-veriscan-9999-gold-bar-carbon-neutral.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 5,457.34</td>
-                <td class="premium "></td>
-            </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/pamp-1oz-lady-fortuna-gold-bar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 5,476.85</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/pamp-1oz-lady-fortuna-gold-bar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 5,412.75</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 40.85 vs Big Bullion</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 21.75</span>
             
         </div>
     </div>
-    <div class="product-card" data-group="1oz Gold">
-        <h3>1oz Perth Mint Gold Bar</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">1oz Perth Mint Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/1-oz-perth-mint-9999-gold-cast-bar.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 5,405.75</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/1-oz-perth-mint-9999-gold-cast-bar.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 5,357.58</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        
         
     </div>
-    <div class="product-card" data-group="1oz Gold">
-        <h3>1oz Argor-Heraeus Gold Bar</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">1oz Argor-Heraeus Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 5,398.00</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 5,354.00</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/1oz-argor-heraeus-9999-gold-kine-bar.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 5,444.44</td>
-                <td class="premium "></td>
-            </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/1oz-argor-heraeus-kinebar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 5,489.68</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/1oz-argor-heraeus-kinebar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 5,425.43</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 91.68 vs Big Bullion</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 71.43</span>
             
         </div>
     </div>
-    <div class="product-card" data-group="1oz Gold">
-        <h3>1oz Gold Bar (any brand)</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">1oz Gold Bar (any brand)</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/1-oz-perth-mint-9999-gold-cast-bar.html" target="_blank">LPM</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 5,405.75</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/1-oz-perth-mint-9999-gold-cast-bar.html" target="_blank">LPM</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 5,357.58</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
-                <td class="price">SGD 5,436.00</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
+                <td class="td-price">SGD 5,391.00</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/pamp-1oz-lady-fortuna-gold-bar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 5,476.85</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/pamp-1oz-lady-fortuna-gold-bar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 5,412.75</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 71.10 vs Big Bullion</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 55.17</span>
             
         </div>
     </div>
-    <div class="product-card" data-group="1oz Gold">
-        <h3>1 oz Canadian Maple Leaf Gold Coin</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">1 oz Canadian Maple Leaf Gold Coin</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
-                <td class="price">SGD 5,436.00</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
+                <td class="td-price">SGD 5,391.00</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-    </div></div><div class="group-section" data-group="50g Gold"><h2 class="group-heading">50g Gold</h2>
-    <div class="product-card" data-group="50g Gold">
-        <h3>50g PAMP Gold Bar</h3>
-        <table class="price-table">
+        
+    </div></div></div><div class="group-section" data-metal="gold" data-weight="50g"><h2 class="group-heading">50g Gold</h2><div class="cards-grid">
+    <div class="product-card">
+        <h3 class="card-title">50g PAMP Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 8,595.00</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 8,523.00</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/pamp-50g-lady-fortuna-gold-bar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 8,723.45</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/pamp-50g-lady-fortuna-gold-bar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 8,621.36</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 128.45 vs Big Bullion</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 98.36</span>
             
         </div>
     </div>
-    <div class="product-card" data-group="50g Gold">
-        <h3>50g Gold Bar (any brand)</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">50g Gold Bar (any brand)</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 8,595.00</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 8,523.00</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/pamp-50g-lady-fortuna-gold-bar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 8,723.45</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/pamp-50g-lady-fortuna-gold-bar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 8,621.36</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 128.45 vs Big Bullion</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 98.36</span>
             
         </div>
-    </div></div><div class="group-section" data-group="100g Gold"><h2 class="group-heading">100g Gold</h2>
-    <div class="product-card" data-group="100g Gold">
-        <h3>100g PAMP Gold Bar</h3>
-        <table class="price-table">
+    </div></div></div><div class="group-section" data-metal="gold" data-weight="100g"><h2 class="group-heading">100g Gold</h2><div class="cards-grid">
+    <div class="product-card">
+        <h3 class="card-title">100g PAMP Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
-                <td class="price">SGD 17,114.00</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
+                <td class="td-price">SGD 16,969.00</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        
         
     </div>
-    <div class="product-card" data-group="100g Gold">
-        <h3>100g Argor-Heraeus Gold Bar</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">100g Argor-Heraeus Gold Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/100g-argor-heraeus-cast-bar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 17,192.75</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/100g-argor-heraeus-cast-bar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 16,991.54</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        
         
     </div>
-    <div class="product-card" data-group="100g Gold">
-        <h3>100g Gold Bar (any brand)</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">100g Gold Bar (any brand)</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 17,114.00</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/100g-heraeus-gold-cast-bar" target="_blank">Big Bullion</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 16,931.63</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/100g-heraeus-gold-cast-bar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 17,132.13</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
+                <td class="td-price">SGD 16,969.00</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 18.13 vs Big Bullion</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 37.37</span>
             
         </div>
-    </div></div><div class="group-section" data-group="1oz Silver"><h2 class="group-heading">1oz Silver</h2>
-    <div class="product-card" data-group="1oz Silver">
-        <h3>1oz Heraeus Silver Bar</h3>
-        <table class="price-table">
+    </div></div></div><div class="group-section" data-metal="silver" data-weight="1oz"><h2 class="group-heading">1oz Silver</h2><div class="cards-grid">
+    <div class="product-card">
+        <h3 class="card-title">1oz Heraeus Silver Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/1oz-argor-heraeus-999-silver-minted-bar.html" target="_blank">LPM</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 140.51</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/1oz-argor-heraeus-999-silver-minted-bar.html" target="_blank">LPM</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 139.10</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
-                <td class="price">SGD 5,398.00</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://www.uobgroup.com/online-rates/gold-and-silver-prices.page" target="_blank">UOB</a></td>
+                <td class="td-price">SGD 5,354.00</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 5,257.49 vs UOB</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 5,214.90</span>
             
         </div>
     </div>
-    <div class="product-card" data-group="1oz Silver">
-        <h3>1oz Perth Mint Silver Bar</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">1oz Perth Mint Silver Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/1-oz-perth-mint-kangaroo-9999-silver-bar.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 86.98</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/1-oz-perth-mint-kangaroo-9999-silver-bar.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 85.58</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        
         
     </div>
-    <div class="product-card" data-group="1oz Silver">
-        <h3>1oz Nadir Silver Bar</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">1oz Nadir Silver Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/1-oz-nadir-999-silver-bar-in-assay-serial-number-280888.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 798.31</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/1-oz-nadir-999-silver-bar-in-assay-serial-number-280888.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 796.90</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        
         
     </div>
-    <div class="product-card" data-group="1oz Silver">
-        <h3>1oz Silver Bar (any brand)</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">1oz Silver Bar (any brand)</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/1oz-2014-american-eagle-silver-coin" target="_blank">Big Bullion</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 82.85</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/1-oz-perth-mint-kangaroo-9999-silver-bar.html" target="_blank">LPM</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 85.58</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/1-oz-perth-mint-kangaroo-9999-silver-bar.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 86.98</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/1oz-2014-american-eagle-silver-coin" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 1,618.10</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 4.13 vs LPM</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 1,532.52</span>
             
         </div>
-    </div></div><div class="group-section" data-group="100g Silver"><h2 class="group-heading">100g Silver</h2>
-    <div class="product-card" data-group="100g Silver">
-        <h3>100g Nadir Silver Bar</h3>
-        <table class="price-table">
+    </div></div></div><div class="group-section" data-metal="silver" data-weight="100g"><h2 class="group-heading">100g Silver</h2><div class="cards-grid">
+    <div class="product-card">
+        <h3 class="card-title">100g Nadir Silver Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/100-gram-nadir-999-silver-bar-in-assay-serial-number-072888.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 682.95</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/100-gram-nadir-999-silver-bar-in-assay-serial-number-072888.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 678.42</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        
         
     </div>
-    <div class="product-card" data-group="100g Silver">
-        <h3>100g Silver Bar (any brand)</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">100g Silver Bar (any brand)</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/100-gram-nadir-999-silver-bar-in-assay-serial-number-072888.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 682.95</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/2026-100-gram-fifa-world-cup-9999-silver-bar.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 292.15</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-    </div></div><div class="group-section" data-group="10oz Silver"><h2 class="group-heading">10oz Silver</h2>
-    <div class="product-card" data-group="10oz Silver">
-        <h3>10oz Heraeus Silver Bar</h3>
-        <table class="price-table">
+        
+    </div></div></div><div class="group-section" data-metal="silver" data-weight="10oz"><h2 class="group-heading">10oz Silver</h2><div class="cards-grid">
+    <div class="product-card">
+        <h3 class="card-title">10oz Heraeus Silver Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/10oz-heraeus-silver-bar" target="_blank">Big Bullion</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 828.01</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/10oz-heraeus-silver-bar" target="_blank">Big Bullion</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 808.49</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/10-oz-heraeus-9999-silver-bar.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 838.24</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/10-oz-heraeus-9999-silver-bar.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 824.18</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 10.23 vs LPM</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 15.69</span>
             
         </div>
     </div>
-    <div class="product-card" data-group="10oz Silver">
-        <h3>10oz Nadir Silver Bar</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">10oz Nadir Silver Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/10-oz-nadir-9999-silver-cast-bar-serial-number-62222.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 1,508.29</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/10-oz-nadir-9999-silver-cast-bar-serial-number-62222.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 1,494.23</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        
         
     </div>
-    <div class="product-card" data-group="10oz Silver">
-        <h3>10oz Silver Bar (any brand)</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">10oz Silver Bar (any brand)</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/10-oz-abc-refinery-the-southern-cross-9999-silver-minted-bar.html" target="_blank">LPM</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 805.35</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/10-oz-abc-refinery-the-southern-cross-9999-silver-minted-bar.html" target="_blank">LPM</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 791.29</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/10oz-heraeus-silver-bar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 828.01</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/10oz-heraeus-silver-bar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 808.49</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 22.66 vs Big Bullion</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 17.20</span>
             
         </div>
-    </div></div><div class="group-section" data-group="1kg Silver"><h2 class="group-heading">1kg Silver</h2>
-    <div class="product-card" data-group="1kg Silver">
-        <h3>1kg Heraeus Silver Bar</h3>
-        <table class="price-table">
+    </div></div></div><div class="group-section" data-metal="silver" data-weight="1kg"><h2 class="group-heading">1kg Silver</h2><div class="cards-grid">
+    <div class="product-card">
+        <h3 class="card-title">1kg Heraeus Silver Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/1kg-heraeus-silver-cast-bar" target="_blank">Big Bullion</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 2,592.29</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/1kg-heraeus-silver-cast-bar" target="_blank">Big Bullion</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 2,531.37</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/1-kilo-heraeus-999-silver-bar.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 2,616.22</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/1-kilo-heraeus-999-silver-bar.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 2,571.01</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 23.93 vs LPM</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 39.64</span>
             
         </div>
     </div>
-    <div class="product-card" data-group="1kg Silver">
-        <h3>1kg Nadir Silver Bar</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">1kg Nadir Silver Bar</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/kg-nadir-9999-silver-bar.html" target="_blank">LPM</a></td>
-                <td class="price">SGD 2,558.16</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/kg-nadir-9999-silver-bar.html" target="_blank">LPM</a></td>
+                <td class="td-price">SGD 2,460.87</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
+        
         
     </div>
-    <div class="product-card" data-group="1kg Silver">
-        <h3>1kg Silver Bar (any brand)</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">1kg Silver Bar (any brand)</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 
-            <tr class="cheapest-row">
-                <td class="dealer"><a href="https://www.lpm.sg/sg_en/kg-nadir-9999-silver-bar.html" target="_blank">LPM</a> <span class="badge">BEST</span></td>
-                <td class="price">SGD 2,558.16</td>
-                <td class="premium "></td>
+            <tr class="cheapest-row" style="">
+                <td class="td-dealer"><a href="https://www.lpm.sg/sg_en/kg-nadir-9999-silver-bar.html" target="_blank">LPM</a> <span class="best-badge">BEST</span></td>
+                <td class="td-price">SGD 2,460.87</td>
+                <td class="td-premium "></td>
             </tr>
-            <tr class="">
-                <td class="dealer"><a href="https://bigbullionsg.com/products/1kg-heraeus-silver-cast-bar" target="_blank">Big Bullion</a></td>
-                <td class="price">SGD 2,592.29</td>
-                <td class="premium "></td>
+            <tr class="" style="">
+                <td class="td-dealer"><a href="https://bigbullionsg.com/products/1kg-heraeus-silver-cast-bar" target="_blank">Big Bullion</a></td>
+                <td class="td-price">SGD 2,531.37</td>
+                <td class="td-premium "></td>
             </tr>
             </tbody>
         </table>
         
-        <div class="summary">
-            <span class="summary-savings">Save SGD 34.13 vs Big Bullion</span>
+        
+        <div class="card-summary">
+            <span class="card-savings">Save SGD 70.50</span>
             
         </div>
-    </div></div>
+    </div></div></div>
+    </main>
 </div>
 <script>
 
-function filterGroup(value) {
-    const sections = document.querySelectorAll('.group-section');
-    sections.forEach(section => {
-        if (value === 'all' || section.dataset.group === value) {
-            section.style.display = '';
-        } else {
-            section.style.display = 'none';
-        }
+document.addEventListener('DOMContentLoaded', function() {
+    let activeMetal = 'all';
+    let activeWeight = 'all';
+
+    document.querySelectorAll('.filter-row:first-child .pill').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-row:first-child .pill').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            activeMetal = this.dataset.filter;
+            applyFilters();
+        });
     });
+
+    document.querySelectorAll('.pill-weight').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.pill-weight').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            activeWeight = this.dataset.weight;
+            applyFilters();
+        });
+    });
+
+    function applyFilters() {
+        document.querySelectorAll('.group-section').forEach(section => {
+            const metal = section.dataset.metal;
+            const weight = section.dataset.weight;
+            const metalMatch = activeMetal === 'all' || metal === activeMetal;
+            const weightMatch = activeWeight === 'all' || weight === activeWeight;
+            section.style.display = (metalMatch && weightMatch) ? '' : 'none';
+        });
+    }
+
+    // Sticky filter bar
+    const filterBar = document.getElementById('filter-bar');
+    if (filterBar) {
+        const observer = new IntersectionObserver(
+            ([e]) => e.target.classList.toggle('stuck', e.intersectionRatio < 1),
+            { threshold: [1], rootMargin: '-1px 0px 0px 0px' }
+        );
+        observer.observe(filterBar);
+    }
+});
+
+function toggleExpand(btn) {
+    const card = btn.closest('.product-card');
+    const hidden = card.querySelectorAll('.hidden-row');
+    const isExpanded = btn.classList.contains('expanded');
+
+    hidden.forEach(row => {
+        row.style.display = isExpanded ? 'none' : '';
+    });
+
+    btn.classList.toggle('expanded');
+    btn.textContent = isExpanded ? btn.dataset.original : 'Show less';
+    if (!btn.dataset.original) {
+        btn.dataset.original = btn.textContent;
+    }
 }
 
 </script>
