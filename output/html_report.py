@@ -178,13 +178,15 @@ def _build_html(
 
 
 def _top_deals_section(results: list[ComparisonResult], spot: SpotPrices | None) -> str:
-    """Show the top 3 lowest-premium products (brand-neutral only)."""
+    """Show top 3 lowest-premium products for gold and silver separately."""
     if not spot:
         return ""
 
-    deals = []
+    gold_deals = []
+    silver_deals = []
+
     for result in results:
-        if not re.search(r"\(any\)", result.canonical_name, re.IGNORECASE):
+        if not re.search(r"\(any", result.canonical_name, re.IGNORECASE):
             continue
 
         cheapest = result.cheapest
@@ -196,45 +198,52 @@ def _top_deals_section(results: list[ComparisonResult], spot: SpotPrices | None)
             continue
 
         premium_pct = float((cheapest.price - spot_price) / spot_price * 100)
-        deals.append((result.canonical_name, cheapest.dealer, cheapest.price, premium_pct, cheapest.url))
+        display_name = re.sub(r"\s*\(any brand\)", "", result.canonical_name)
+        entry = (display_name, cheapest.dealer, cheapest.price, premium_pct, cheapest.url)
 
-    deals.sort(key=lambda x: x[3])
-    top = deals[:3]
+        if "gold" in result.canonical_name.lower():
+            gold_deals.append(entry)
+        else:
+            silver_deals.append(entry)
 
-    if not top:
+    gold_deals.sort(key=lambda x: x[3])
+    silver_deals.sort(key=lambda x: x[3])
+
+    sections = []
+    for label, deals in [("Gold", gold_deals[:3]), ("Silver", silver_deals[:3])]:
+        if not deals:
+            continue
+        rows = []
+        for i, (name, dealer, price, pct, url) in enumerate(deals):
+            medal = ["&#129351;", "&#129352;", "&#129353;"][i]
+            dealer_link = f'<a href="{url}" target="_blank">{dealer}</a>' if url else dealer
+            pct_class = "premium-low" if pct <= 3 else "premium-mid" if pct <= 5 else "premium-high"
+            rows.append(f"""
+                <tr>
+                    <td class="td-rank">{medal}</td>
+                    <td class="td-product">{name}</td>
+                    <td class="td-dealer">{dealer_link}</td>
+                    <td class="td-price">SGD {price:,.2f}</td>
+                    <td class="td-premium {pct_class}">{pct:+.1f}%</td>
+                </tr>""")
+        sections.append(f"""
+        <div class="top-deals-group">
+            <h3>{label}</h3>
+            <table class="top-deals-table">
+                <thead>
+                    <tr><th></th><th>Product</th><th>Dealer</th><th>Price</th><th>Premium</th></tr>
+                </thead>
+                <tbody>{"".join(rows)}</tbody>
+            </table>
+        </div>""")
+
+    if not sections:
         return ""
-
-    rows = []
-    for i, (name, dealer, price, pct, url) in enumerate(top):
-        medal = ["&#129351;", "&#129352;", "&#129353;"][i]
-        dealer_link = f'<a href="{url}" target="_blank">{dealer}</a>' if url else dealer
-        pct_class = "premium-low" if pct <= 3 else "premium-mid" if pct <= 5 else "premium-high"
-        rows.append(f"""
-            <tr>
-                <td class="td-rank">{medal}</td>
-                <td class="td-product">{name}</td>
-                <td class="td-dealer">{dealer_link}</td>
-                <td class="td-price">SGD {price:,.2f}</td>
-                <td class="td-premium {pct_class}">{pct:+.1f}%</td>
-            </tr>""")
 
     return f"""
     <section class="top-deals-section">
-        <h2>Top Deals — Lowest Premium</h2>
-        <table class="top-deals-table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Product</th>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
-            </thead>
-            <tbody>
-                {"".join(rows)}
-            </tbody>
-        </table>
+        <h2>Best Buys — Lowest Premium</h2>
+        {"".join(sections)}
     </section>"""
 
 
@@ -678,7 +687,17 @@ h1 {
     font-size: 1rem;
     font-weight: 700;
     color: #1e293b;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
+}
+.top-deals-group { margin-bottom: 1.25rem; }
+.top-deals-group:last-child { margin-bottom: 0; }
+.top-deals-group h3 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
 }
 .top-deals-table {
     width: 100%;
