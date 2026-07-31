@@ -113,60 +113,36 @@ def _build_generic_patterns(metal: str, weight_aliases: list[str]) -> list[str]:
 def _generate_products() -> list[CanonicalProduct]:
     products: list[CanonicalProduct] = []
 
-    # --- Gold brand-specific ---
-    gold_weights = ["1g", "5g", "10g", "20g", "1oz", "50g", "100g"]
-    for brand, aliases in GOLD_BRAND_ALIASES.items():
-        for weight in gold_weights:
-            w_aliases = WEIGHT_ALIASES[weight]
-            patterns = _build_brand_patterns(aliases, w_aliases)
+    metal_configs = [
+        ("gold", "Gold", GOLD_BRAND_ALIASES, GOLD_MIN_PRICES, GOLD_EXCLUDES,
+         ["1g", "5g", "10g", "20g", "1oz", "50g", "100g"]),
+        ("silver", "Silver", SILVER_BRAND_ALIASES, SILVER_MIN_PRICES, SILVER_EXCLUDES,
+         ["1oz", "10oz", "100g", "250g", "500g", "1kg"]),
+    ]
+
+    for metal, metal_label, brand_aliases, min_prices, excludes, weights in metal_configs:
+        for brand, aliases in brand_aliases.items():
+            for weight in weights:
+                patterns = _build_brand_patterns(aliases, WEIGHT_ALIASES[weight])
+                products.append(CanonicalProduct(
+                    name=f"{weight} {brand} {metal_label} Bar",
+                    metal=metal,
+                    weight=weight,
+                    min_price=min_prices[weight],
+                    exclude_patterns=excludes,
+                    patterns=_compile(patterns),
+                ))
+
+        for weight in weights:
+            patterns = _build_generic_patterns(metal, WEIGHT_ALIASES[weight])
             products.append(CanonicalProduct(
-                name=f"{weight} {brand} Gold Bar",
-                metal="gold",
+                name=f"{weight} {metal_label} Bar (any brand)",
+                metal=metal,
                 weight=weight,
-                min_price=GOLD_MIN_PRICES[weight],
-                exclude_patterns=GOLD_EXCLUDES,
+                min_price=min_prices[weight],
+                exclude_patterns=excludes,
                 patterns=_compile(patterns),
             ))
-
-    # --- Silver brand-specific ---
-    silver_weights = ["1oz", "10oz", "100g", "250g", "500g", "1kg"]
-    for brand, aliases in SILVER_BRAND_ALIASES.items():
-        for weight in silver_weights:
-            w_aliases = WEIGHT_ALIASES[weight]
-            patterns = _build_brand_patterns(aliases, w_aliases)
-            products.append(CanonicalProduct(
-                name=f"{weight} {brand} Silver Bar",
-                metal="silver",
-                weight=weight,
-                min_price=SILVER_MIN_PRICES[weight],
-                exclude_patterns=SILVER_EXCLUDES,
-                patterns=_compile(patterns),
-            ))
-
-    # --- Generic (cheapest any brand) ---
-    for weight in gold_weights:
-        w_aliases = WEIGHT_ALIASES[weight]
-        patterns = _build_generic_patterns("gold", w_aliases)
-        products.append(CanonicalProduct(
-            name=f"{weight} Gold Bar (any brand)",
-            metal="gold",
-            weight=weight,
-            min_price=GOLD_MIN_PRICES[weight],
-            exclude_patterns=GOLD_EXCLUDES,
-            patterns=_compile(patterns),
-        ))
-
-    for weight in silver_weights:
-        w_aliases = WEIGHT_ALIASES[weight]
-        patterns = _build_generic_patterns("silver", w_aliases)
-        products.append(CanonicalProduct(
-            name=f"{weight} Silver Bar (any brand)",
-            metal="silver",
-            weight=weight,
-            min_price=SILVER_MIN_PRICES[weight],
-            exclude_patterns=SILVER_EXCLUDES,
-            patterns=_compile(patterns),
-        ))
 
     # --- Gold coins (manual) ---
     products.append(CanonicalProduct(
