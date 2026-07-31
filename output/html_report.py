@@ -1,4 +1,4 @@
-"""HTML report — generates a styled price comparison report with filter dropdown."""
+"""HTML report — generates a dashboard-style price comparison report."""
 
 from __future__ import annotations
 
@@ -44,7 +44,6 @@ def export_html(
 
 
 def _get_group(canonical_name: str) -> str:
-    """Derive a group label like '1oz Gold' or '1kg Silver' from the product name."""
     name_lower = canonical_name.lower()
     metal = "Gold" if "gold" in name_lower else "Silver"
 
@@ -58,77 +57,7 @@ def _get_group(canonical_name: str) -> str:
     return f"Other {metal}"
 
 
-def _build_html(
-    results: list[ComparisonResult],
-    spot: SpotPrices | None,
-    history: list[SpotDataPoint] | None,
-    timestamp: datetime,
-    failed_dealers: list[str] | None = None,
-) -> str:
-    groups: defaultdict[str, list[str]] = defaultdict(list)
-
-    for result in results:
-        group = _get_group(result.canonical_name)
-        groups[group].append(_product_section(result, spot, group))
-
-    group_order = _sort_groups(list(groups.keys()))
-    options = ['<option value="all">All Products</option>']
-    for g in group_order:
-        options.append(f'<option value="{g}">{g}</option>')
-
-    sections = []
-    for g in group_order:
-        cards = "".join(groups[g])
-        sections.append(f'<div class="group-section" data-group="{g}">'
-                        f'<h2 class="group-heading">{g}</h2>{cards}</div>')
-
-    spot_html = _spot_section(spot) if spot else ""
-    chart_html = _chart_section(history) if history else ""
-    promo_html = _promotions_section(results)
-    failed_html = ""
-    if failed_dealers:
-        dealer_list = ", ".join(failed_dealers)
-        failed_html = f"""
-    <div class="failed-notice">
-        <strong>Data unavailable:</strong> {dealer_list}
-    </div>"""
-
-    return f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bullion Price Comparison — {timestamp:%d %b %Y %H:%M}</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-<style>
-{_CSS}
-</style>
-</head>
-<body>
-<div class="container">
-    <h1>Bullion Price Comparison</h1>
-    <p class="timestamp">Generated: {timestamp:%A, %d %B %Y at %H:%M:%S} SGT</p>
-    {failed_html}
-    {spot_html}
-    {chart_html}
-    {promo_html}
-    <div class="filter-bar">
-        <label for="group-filter">Filter by size:</label>
-        <select id="group-filter" onchange="filterGroup(this.value)">
-            {"".join(options)}
-        </select>
-    </div>
-    {"".join(sections)}
-</div>
-<script>
-{_JS}
-</script>
-</body>
-</html>"""
-
-
 def _sort_groups(groups: list[str]) -> list[str]:
-    """Sort groups: gold first, then silver, each by weight ascending."""
     weight_order = {"1g": 1, "5g": 2, "10g": 3, "20g": 4, "1oz": 5,
                     "50g": 6, "100g": 7, "250g": 8, "500g": 9, "10oz": 10, "1kg": 11}
 
@@ -141,25 +70,268 @@ def _sort_groups(groups: list[str]) -> list[str]:
     return sorted(groups, key=sort_key)
 
 
-def _spot_section(spot: SpotPrices) -> str:
-    rows = []
+def _build_html(
+    results: list[ComparisonResult],
+    spot: SpotPrices | None,
+    history: list[SpotDataPoint] | None,
+    timestamp: datetime,
+    failed_dealers: list[str] | None = None,
+) -> str:
+    groups: defaultdict[str, list[str]] = defaultdict(list)
+
+    for result in results:
+        group = _get_group(result.canonical_name)
+        groups[group].append(_product_card(result, spot, group))
+
+    group_order = _sort_groups(list(groups.keys()))
+
+    gold_groups = [g for g in group_order if "Gold" in g]
+    silver_groups = [g for g in group_order if "Silver" in g]
+
+    filter_pills = []
+    filter_pills.append('<button class="pill active" data-filter="all">All</button>')
+    filter_pills.append('<button class="pill pill-gold" data-filter="gold">Gold</button>')
+    filter_pills.append('<button class="pill pill-silver" data-filter="silver">Silver</button>')
+
+    weight_pills = []
+    seen_weights = []
+    for g in group_order:
+        match = re.match(r"(\d+(?:oz|g|kg))", g.lower())
+        if match and match.group(1) not in seen_weights:
+            seen_weights.append(match.group(1))
+            weight_pills.append(f'<button class="pill pill-weight" data-weight="{match.group(1)}">{match.group(1)}</button>')
+
+    sections = []
+    for g in group_order:
+        metal = "gold" if "Gold" in g else "silver"
+        match = re.match(r"(\d+(?:oz|g|kg))", g.lower())
+        weight = match.group(1) if match else "other"
+        cards = "".join(groups[g])
+        sections.append(
+            f'<div class="group-section" data-metal="{metal}" data-weight="{weight}">'
+            f'<h2 class="group-heading">{g}</h2>'
+            f'<div class="cards-grid">{cards}</div></div>'
+        )
+
+    spot_html = _spot_hero(spot, history) if spot else ""
+    chart_html = _chart_section(history) if history else ""
+    promo_html = _promotions_section(results)
+    failed_html = ""
+    if failed_dealers:
+        dealer_list = ", ".join(failed_dealers)
+        failed_html = f'<div class="failed-notice"><span class="failed-icon">!</span> <strong>Data unavailable:</strong> {dealer_list}</div>'
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SG Bullion Prices — {timestamp:%d %b %Y}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+{_CSS}
+</style>
+</head>
+<body>
+<div class="dashboard">
+    <header class="header">
+        <div class="header-top">
+            <h1>SG Bullion Prices</h1>
+            <span class="timestamp">{timestamp:%d %b %Y, %H:%M} SGT</span>
+        </div>
+        {failed_html}
+    </header>
+
+    {spot_html}
+    {chart_html}
+    {promo_html}
+
+    <div class="filter-bar" id="filter-bar">
+        <div class="filter-row">
+            {"".join(filter_pills)}
+        </div>
+        <div class="filter-row weight-row">
+            <button class="pill pill-weight active" data-weight="all">All sizes</button>
+            {"".join(weight_pills)}
+        </div>
+    </div>
+
+    <main class="main-content">
+        {"".join(sections)}
+    </main>
+</div>
+<script>
+{_JS}
+</script>
+</body>
+</html>"""
+
+
+def _spot_hero(spot: SpotPrices, history: list[SpotDataPoint] | None) -> str:
+    gold_change = ""
+    silver_change = ""
+
+    if history and len(history) >= 2:
+        prev = history[-2]
+        if spot.gold_oz and prev.gold_sgd and prev.gold_sgd > 0:
+            pct = float((spot.gold_oz - prev.gold_sgd) / prev.gold_sgd * 100)
+            arrow = "&#9650;" if pct >= 0 else "&#9660;"
+            cls = "change-up" if pct >= 0 else "change-down"
+            gold_change = f'<span class="spot-change {cls}">{arrow} {abs(pct):.2f}%</span>'
+        if spot.silver_oz and prev.silver_sgd and prev.silver_sgd > 0:
+            pct = float((spot.silver_oz - prev.silver_sgd) / prev.silver_sgd * 100)
+            arrow = "&#9650;" if pct >= 0 else "&#9660;"
+            cls = "change-up" if pct >= 0 else "change-down"
+            silver_change = f'<span class="spot-change {cls}">{arrow} {abs(pct):.2f}%</span>'
+
+    gold_section = ""
     if spot.gold_oz:
-        rows.append(f'<tr><td>Gold</td><td class="price">SGD {spot.gold_oz:,.2f}</td></tr>')
+        gold_section = f"""
+        <div class="spot-item spot-gold">
+            <span class="spot-label">Gold</span>
+            <span class="spot-value">SGD {spot.gold_oz:,.2f}</span>
+            <span class="spot-unit">per troy oz</span>
+            {gold_change}
+        </div>"""
+
+    silver_section = ""
     if spot.silver_oz:
-        rows.append(f'<tr><td>Silver</td><td class="price">SGD {spot.silver_oz:,.2f}</td></tr>')
+        silver_section = f"""
+        <div class="spot-item spot-silver">
+            <span class="spot-label">Silver</span>
+            <span class="spot-value">SGD {spot.silver_oz:,.2f}</span>
+            <span class="spot-unit">per troy oz</span>
+            {silver_change}
+        </div>"""
 
     return f"""
-    <div class="spot-card">
-        <h2>Spot Prices <span class="unit">(per troy oz)</span></h2>
-        <table class="spot-table">
-            {"".join(rows)}
-        </table>
-        <p class="source">Source: {spot.source}</p>
-    </div>"""
+    <section class="spot-hero">
+        <div class="spot-grid">
+            {gold_section}
+            {silver_section}
+        </div>
+        <p class="spot-source">Source: {spot.source}</p>
+    </section>"""
+
+
+def _chart_section(history: list[SpotDataPoint]) -> str:
+    labels = []
+    gold_data = []
+    silver_data = []
+
+    for point in history:
+        labels.append(f'"{point.date}"')
+        gold_data.append(str(round(float(point.gold_sgd), 2)) if point.gold_sgd else "null")
+        silver_data.append(str(round(float(point.silver_sgd), 2)) if point.silver_sgd else "null")
+
+    return f"""
+    <section class="chart-section">
+        <h2>12-Month Spot Trend</h2>
+        <div class="chart-wrapper">
+            <div class="chart-box">
+                <span class="chart-label">Gold (SGD/oz)</span>
+                <canvas id="goldChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <span class="chart-label">Silver (SGD/oz)</span>
+                <canvas id="silverChart"></canvas>
+            </div>
+        </div>
+    </section>
+    <script>
+    (function() {{
+        const labels = [{",".join(labels)}];
+        const goldData = [{",".join(gold_data)}];
+        const silverData = [{",".join(silver_data)}];
+
+        const baseOpts = {{
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {{ intersect: false, mode: 'index' }},
+            plugins: {{
+                legend: {{ display: false }},
+                tooltip: {{
+                    backgroundColor: '#1e293b',
+                    titleFont: {{ family: 'Inter' }},
+                    bodyFont: {{ family: 'Inter' }},
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {{
+                        label: ctx => 'SGD ' + ctx.parsed.y.toLocaleString(undefined, {{minimumFractionDigits: 2}})
+                    }}
+                }}
+            }},
+            scales: {{
+                x: {{
+                    border: {{ display: false }},
+                    grid: {{ display: false }},
+                    ticks: {{
+                        font: {{ family: 'Inter', size: 11 }},
+                        color: '#94a3b8',
+                        maxRotation: 0,
+                        callback: function(val, idx) {{
+                            const d = new Date(labels[idx]);
+                            return d.toLocaleDateString('en-SG', {{month: 'short'}});
+                        }}
+                    }}
+                }},
+                y: {{
+                    border: {{ display: false }},
+                    grid: {{ color: '#f1f5f9' }},
+                    ticks: {{
+                        font: {{ family: 'Inter', size: 11 }},
+                        color: '#94a3b8',
+                        callback: val => val.toLocaleString()
+                    }}
+                }}
+            }}
+        }};
+
+        new Chart(document.getElementById('goldChart'), {{
+            type: 'line',
+            data: {{
+                labels: labels,
+                datasets: [{{
+                    data: goldData,
+                    borderColor: '#d97706',
+                    backgroundColor: 'rgba(217, 119, 6, 0.08)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#d97706',
+                    pointBorderWidth: 0,
+                    borderWidth: 2.5,
+                }}]
+            }},
+            options: baseOpts
+        }});
+
+        new Chart(document.getElementById('silverChart'), {{
+            type: 'line',
+            data: {{
+                labels: labels,
+                datasets: [{{
+                    data: silverData,
+                    borderColor: '#64748b',
+                    backgroundColor: 'rgba(100, 116, 139, 0.08)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#64748b',
+                    pointBorderWidth: 0,
+                    borderWidth: 2.5,
+                }}]
+            }},
+            options: baseOpts
+        }});
+    }})();
+    </script>"""
 
 
 def _promotions_section(results: list[ComparisonResult]) -> str:
-    """Generate a highlighted section showing all active promotions."""
     promos = []
     seen = set()
 
@@ -177,182 +349,81 @@ def _promotions_section(results: list[ComparisonResult]) -> str:
     rows = []
     for canonical_name, p in promos:
         promo = p.promotion
+        dealer_link = f'<a href="{p.url}" target="_blank">{p.dealer}</a>' if p.url else p.dealer
         rows.append(f"""
-            <tr>
-                <td class="promo-product">{canonical_name}</td>
-                <td class="promo-dealer">{'<a href="' + p.url + '" target="_blank">' + p.dealer + '</a>' if p.url else p.dealer}</td>
-                <td class="promo-regular"><s>SGD {promo.regular_price:,.2f}</s></td>
-                <td class="promo-offer">SGD {promo.offer_price:,.2f}</td>
-                <td class="promo-discount">-{promo.discount_pct:.1f}%</td>
-            </tr>""")
+            <div class="promo-item">
+                <div class="promo-info">
+                    <span class="promo-product">{canonical_name}</span>
+                    <span class="promo-dealer">{dealer_link}</span>
+                </div>
+                <div class="promo-prices">
+                    <span class="promo-regular">SGD {promo.regular_price:,.2f}</span>
+                    <span class="promo-offer">SGD {promo.offer_price:,.2f}</span>
+                    <span class="promo-badge">-{promo.discount_pct:.1f}%</span>
+                </div>
+            </div>""")
 
     return f"""
-    <div class="promo-card">
+    <section class="promo-section">
         <h2>Active Promotions</h2>
-        <table class="promo-table">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Dealer</th>
-                    <th>Regular</th>
-                    <th>Offer</th>
-                    <th>Discount</th>
-                </tr>
-            </thead>
-            <tbody>
-                {"".join(rows)}
-            </tbody>
-        </table>
-    </div>"""
-
-
-def _chart_section(history: list[SpotDataPoint]) -> str:
-    """Generate the 12-month spot price chart using Chart.js."""
-    labels = []
-    gold_data = []
-    silver_data = []
-
-    for point in history:
-        labels.append(f'"{point.date}"')
-        gold_data.append(str(round(float(point.gold_sgd), 2)) if point.gold_sgd else "null")
-        silver_data.append(str(round(float(point.silver_sgd), 2)) if point.silver_sgd else "null")
-
-    return f"""
-    <div class="chart-card">
-        <h2>Spot Price — 12 Month Trend</h2>
-        <div class="chart-tabs">
-            <button class="chart-tab active" onclick="showChart('gold')">Gold</button>
-            <button class="chart-tab" onclick="showChart('silver')">Silver</button>
+        <div class="promo-list">
+            {"".join(rows)}
         </div>
-        <div class="chart-container" id="chart-gold">
-            <canvas id="goldChart"></canvas>
-        </div>
-        <div class="chart-container" id="chart-silver" style="display:none;">
-            <canvas id="silverChart"></canvas>
-        </div>
-    </div>
-    <script>
-    (function() {{
-        const labels = [{",".join(labels)}];
-        const goldData = [{",".join(gold_data)}];
-        const silverData = [{",".join(silver_data)}];
-
-        const chartOpts = {{
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {{ intersect: false, mode: 'index' }},
-            plugins: {{
-                legend: {{ display: false }},
-                tooltip: {{
-                    callbacks: {{
-                        label: ctx => 'SGD ' + ctx.parsed.y.toLocaleString(undefined, {{minimumFractionDigits: 2}})
-                    }}
-                }}
-            }},
-            scales: {{
-                x: {{
-                    grid: {{ display: false }},
-                    ticks: {{
-                        callback: function(val, idx) {{
-                            const d = new Date(labels[idx]);
-                            return d.toLocaleDateString('en-SG', {{month: 'short', year: '2-digit'}});
-                        }}
-                    }}
-                }},
-                y: {{
-                    grid: {{ color: '#f2f2f7' }},
-                    ticks: {{
-                        callback: val => 'SGD ' + val.toLocaleString()
-                    }}
-                }}
-            }}
-        }};
-
-        new Chart(document.getElementById('goldChart'), {{
-            type: 'line',
-            data: {{
-                labels: labels,
-                datasets: [{{
-                    data: goldData,
-                    borderColor: '#D4AF37',
-                    backgroundColor: 'rgba(212, 175, 55, 0.1)',
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#D4AF37',
-                }}]
-            }},
-            options: chartOpts
-        }});
-
-        new Chart(document.getElementById('silverChart'), {{
-            type: 'line',
-            data: {{
-                labels: labels,
-                datasets: [{{
-                    data: silverData,
-                    borderColor: '#8E8E93',
-                    backgroundColor: 'rgba(142, 142, 147, 0.1)',
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#8E8E93',
-                }}]
-            }},
-            options: chartOpts
-        }});
-    }})();
-
-    function showChart(metal) {{
-        document.getElementById('chart-gold').style.display = metal === 'gold' ? '' : 'none';
-        document.getElementById('chart-silver').style.display = metal === 'silver' ? '' : 'none';
-        document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
-    }}
-    </script>"""
+    </section>"""
 
 
-def _product_section(result: ComparisonResult, spot: SpotPrices | None, group: str) -> str:
+def _product_card(result: ComparisonResult, spot: SpotPrices | None, group: str) -> str:
     spot_price = get_spot_for_product(result.canonical_name, spot)
 
     in_stock = [p for p in result.prices if p.in_stock]
     out_of_stock = [p for p in result.prices if not p.in_stock]
     cheapest = result.cheapest
+    show_expand = len(in_stock) > 3
 
     rows = []
-    for p in in_stock:
+    for i, p in enumerate(in_stock):
         premium_str = ""
         premium_class = ""
+        heatmap_style = ""
         if spot_price and spot_price > 0:
-            premium_pct = ((p.price - spot_price) / spot_price) * 100
+            premium_pct = float((p.price - spot_price) / spot_price * 100)
             premium_str = f"{premium_pct:+.1f}%"
-            if premium_pct <= 4:
+            if premium_pct <= 3:
                 premium_class = "premium-low"
-            elif premium_pct <= 6:
+                heatmap_style = "background: rgba(34,197,94,0.06);"
+            elif premium_pct <= 5:
                 premium_class = "premium-mid"
+                heatmap_style = "background: rgba(245,158,11,0.06);"
             else:
                 premium_class = "premium-high"
+                heatmap_style = "background: rgba(239,68,68,0.06);"
 
         is_cheapest = cheapest and p.dealer == cheapest.dealer and p.price == cheapest.price
         row_class = "cheapest-row" if is_cheapest else ""
-        badge = ' <span class="badge">BEST</span>' if is_cheapest and len(in_stock) > 1 else ""
+        hidden_class = " hidden-row" if show_expand and i >= 3 else ""
+        badge = ' <span class="best-badge">BEST</span>' if is_cheapest and len(in_stock) > 1 else ""
 
         dealer_link = f'<a href="{p.url}" target="_blank">{p.dealer}</a>' if p.url else p.dealer
         rows.append(f"""
-            <tr class="{row_class}">
-                <td class="dealer">{dealer_link}{badge}</td>
-                <td class="price">SGD {p.price:,.2f}</td>
-                <td class="premium {premium_class}">{premium_str}</td>
+            <tr class="{row_class}{hidden_class}" style="{heatmap_style}">
+                <td class="td-dealer">{dealer_link}{badge}</td>
+                <td class="td-price">SGD {p.price:,.2f}</td>
+                <td class="td-premium {premium_class}">{premium_str}</td>
             </tr>""")
 
     for p in out_of_stock:
         dealer_link = f'<a href="{p.url}" target="_blank">{p.dealer}</a>' if p.url else p.dealer
         rows.append(f"""
-            <tr class="oos-row">
-                <td class="dealer">{dealer_link}</td>
-                <td class="price">SGD {p.price:,.2f}</td>
-                <td class="premium oos">OUT OF STOCK</td>
+            <tr class="oos-row hidden-row">
+                <td class="td-dealer">{dealer_link}</td>
+                <td class="td-price">SGD {p.price:,.2f}</td>
+                <td class="td-premium oos">OUT OF STOCK</td>
             </tr>""")
+
+    expand_btn = ""
+    total_hidden = (len(in_stock) - 3 if show_expand else 0) + len(out_of_stock)
+    if total_hidden > 0:
+        expand_btn = f'<button class="expand-btn" onclick="toggleExpand(this)">Show {total_hidden} more</button>'
 
     summary = ""
     if cheapest and len(in_stock) > 1:
@@ -360,318 +431,479 @@ def _product_section(result: ComparisonResult, spot: SpotPrices | None, group: s
         savings = most_expensive.price - cheapest.price
         premium_text = ""
         if spot_price and spot_price > 0:
-            premium = cheapest.price - spot_price
-            premium_pct = (premium / spot_price) * 100
-            premium_text = f'<span class="summary-premium">Premium: SGD {premium:,.2f} ({premium_pct:.1f}% over spot)</span>'
+            premium_pct = float((cheapest.price - spot_price) / spot_price * 100)
+            premium_text = f'<span class="card-premium">{premium_pct:.1f}% over spot</span>'
 
         summary = f"""
-        <div class="summary">
-            <span class="summary-savings">Save SGD {savings:,.2f} vs {most_expensive.dealer}</span>
+        <div class="card-summary">
+            <span class="card-savings">Save SGD {savings:,.2f}</span>
             {premium_text}
         </div>"""
 
     return f"""
-    <div class="product-card" data-group="{group}">
-        <h3>{result.canonical_name}</h3>
-        <table class="price-table">
+    <div class="product-card">
+        <h3 class="card-title">{result.canonical_name}</h3>
+        <table class="card-table">
             <thead>
-                <tr>
-                    <th>Dealer</th>
-                    <th>Price</th>
-                    <th>Premium</th>
-                </tr>
+                <tr><th>Dealer</th><th>Price</th><th>Premium</th></tr>
             </thead>
             <tbody>
                 {"".join(rows)}
             </tbody>
         </table>
+        {expand_btn}
         {summary}
     </div>"""
 
 
 _JS = """
-function filterGroup(value) {
-    const sections = document.querySelectorAll('.group-section');
-    sections.forEach(section => {
-        if (value === 'all' || section.dataset.group === value) {
-            section.style.display = '';
-        } else {
-            section.style.display = 'none';
-        }
+document.addEventListener('DOMContentLoaded', function() {
+    let activeMetal = 'all';
+    let activeWeight = 'all';
+
+    document.querySelectorAll('.filter-row:first-child .pill').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-row:first-child .pill').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            activeMetal = this.dataset.filter;
+            applyFilters();
+        });
     });
+
+    document.querySelectorAll('.pill-weight').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.pill-weight').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            activeWeight = this.dataset.weight;
+            applyFilters();
+        });
+    });
+
+    function applyFilters() {
+        document.querySelectorAll('.group-section').forEach(section => {
+            const metal = section.dataset.metal;
+            const weight = section.dataset.weight;
+            const metalMatch = activeMetal === 'all' || metal === activeMetal;
+            const weightMatch = activeWeight === 'all' || weight === activeWeight;
+            section.style.display = (metalMatch && weightMatch) ? '' : 'none';
+        });
+    }
+
+    // Sticky filter bar
+    const filterBar = document.getElementById('filter-bar');
+    if (filterBar) {
+        const observer = new IntersectionObserver(
+            ([e]) => e.target.classList.toggle('stuck', e.intersectionRatio < 1),
+            { threshold: [1], rootMargin: '-1px 0px 0px 0px' }
+        );
+        observer.observe(filterBar);
+    }
+});
+
+function toggleExpand(btn) {
+    const card = btn.closest('.product-card');
+    const hidden = card.querySelectorAll('.hidden-row');
+    const isExpanded = btn.classList.contains('expanded');
+
+    hidden.forEach(row => {
+        row.style.display = isExpanded ? 'none' : '';
+    });
+
+    btn.classList.toggle('expanded');
+    btn.textContent = isExpanded ? btn.dataset.original : 'Show less';
+    if (!btn.dataset.original) {
+        btn.dataset.original = btn.textContent;
+    }
 }
 """
 
 _CSS = """
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f5f5f7;
-    color: #1d1d1f;
-    padding: 2rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8fafc;
+    color: #0f172a;
     line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
 }
-.container { max-width: 800px; margin: 0 auto; }
-h1 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
+
+.dashboard {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
 }
-.timestamp {
-    color: #6e6e73;
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-}
-.filter-bar {
+
+/* Header */
+.header { margin-bottom: 1.5rem; }
+.header-top {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-.filter-bar label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #6e6e73;
-}
-.filter-bar select {
-    font-size: 0.95rem;
-    padding: 0.5rem 1rem;
-    border: 1px solid #e5e5ea;
-    border-radius: 8px;
-    background: #f5f5f7;
-    color: #1d1d1f;
-    font-weight: 500;
-    cursor: pointer;
-    outline: none;
-}
-.filter-bar select:focus {
-    border-color: #007aff;
-    box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
-}
-.failed-notice {
-    background: #fff3f3;
-    border: 1px solid #ffcdd2;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    margin-bottom: 1.5rem;
-    color: #c62828;
-    font-size: 0.9rem;
-}
-.promo-card {
-    background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
-    border: 1px solid #ffd54f;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-.promo-card h2 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: #e65100;
-}
-.promo-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.promo-table th {
-    text-align: left;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #6e6e73;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.5rem 0.5rem;
-    border-bottom: 1px solid #ffe082;
-}
-.promo-table td {
-    padding: 0.6rem 0.5rem;
-    border-bottom: 1px solid #fff3cd;
-    font-size: 0.9rem;
-}
-.promo-product { font-weight: 500; }
-.promo-dealer { color: #6e6e73; }
-.promo-regular { color: #8e8e93; }
-.promo-offer { font-weight: 700; color: #1d1d1f; }
-.promo-discount {
-    font-weight: 700;
-    color: #e65100;
-    text-align: right;
-}
-.chart-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-.chart-card h2 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-}
-.chart-tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-.chart-tab {
-    padding: 0.4rem 1rem;
-    border: 1px solid #e5e5ea;
-    border-radius: 8px;
-    background: #f5f5f7;
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    color: #6e6e73;
-    transition: all 0.15s;
-}
-.chart-tab.active {
-    background: #1d1d1f;
-    color: #fff;
-    border-color: #1d1d1f;
-}
-.chart-container {
-    height: 280px;
-    position: relative;
-}
-.group-section {
-    margin-bottom: 2rem;
-}
-.group-heading {
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e5e5ea;
-    color: #1d1d1f;
-}
-.spot-card {
-    background: #1d1d1f;
-    color: #f5f5f7;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-.spot-card h2 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-}
-.spot-card .unit { font-weight: 400; color: #a1a1a6; }
-.spot-table { width: 100%; }
-.spot-table td {
-    padding: 0.4rem 0;
-    font-size: 1rem;
-}
-.spot-table .price {
-    text-align: right;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-}
-.source {
-    margin-top: 0.75rem;
-    font-size: 0.8rem;
-    color: #a1a1a6;
-}
-.product-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-.product-card h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: #1d1d1f;
-}
-.price-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.price-table th {
-    text-align: left;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #6e6e73;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #e5e5ea;
-}
-.price-table th:nth-child(2),
-.price-table th:nth-child(3) { text-align: right; }
-.price-table td {
-    padding: 0.6rem 0;
-    border-bottom: 1px solid #f2f2f7;
-    font-size: 0.95rem;
-}
-.price-table .dealer { font-weight: 500; }
-.price-table .dealer a, .promo-dealer a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 1px dashed rgba(0,0,0,0.3);
-}
-.price-table .dealer a:hover, .promo-dealer a:hover {
-    border-bottom-style: solid;
-    color: #2563eb;
-}
-.price-table .price {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    font-weight: 500;
-}
-.price-table .premium {
-    text-align: right;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-.premium-low { color: #34c759; }
-.premium-mid { color: #ff9500; }
-.premium-high { color: #ff3b30; }
-.oos { color: #8e8e93; font-style: italic; font-size: 0.8rem; }
-.oos-row td { color: #8e8e93; }
-.cheapest-row td { color: #1d1d1f; }
-.cheapest-row .price { font-weight: 700; }
-.badge {
-    display: inline-block;
-    background: #34c759;
-    color: #fff;
-    font-size: 0.65rem;
-    font-weight: 700;
-    padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    margin-left: 0.5rem;
-    vertical-align: middle;
-}
-.summary {
-    margin-top: 1rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid #e5e5ea;
-    display: flex;
+    align-items: baseline;
     justify-content: space-between;
-    align-items: center;
     flex-wrap: wrap;
     gap: 0.5rem;
 }
-.summary-savings {
-    font-weight: 600;
-    color: #34c759;
-    font-size: 0.9rem;
+h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0f172a;
 }
-.summary-premium {
+.timestamp {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #64748b;
+    background: #e2e8f0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+}
+
+.failed-notice {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    margin-top: 1rem;
+    color: #991b1b;
     font-size: 0.85rem;
-    color: #6e6e73;
 }
-@media (max-width: 600px) {
-    body { padding: 1rem; }
-    .summary { flex-direction: column; align-items: flex-start; }
-    .filter-bar { flex-direction: column; align-items: flex-start; }
+.failed-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: #dc2626;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* Spot Hero */
+.spot-hero {
+    margin-bottom: 1.5rem;
+}
+.spot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+.spot-item {
+    background: #0f172a;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.spot-gold { border-top: 3px solid #d97706; }
+.spot-silver { border-top: 3px solid #94a3b8; }
+.spot-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+}
+.spot-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #f8fafc;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+.spot-unit {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+.spot-change {
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+.change-up { color: #22c55e; }
+.change-down { color: #ef4444; }
+.spot-source {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.75rem;
+}
+
+/* Chart */
+.chart-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.chart-section h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #334155;
+}
+.chart-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+.chart-box {
+    position: relative;
+    height: 200px;
+}
+.chart-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.chart-box canvas {
+    margin-top: 1.25rem;
+}
+
+/* Promotions */
+.promo-section {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1px solid #fde68a;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.promo-section h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 1rem;
+}
+.promo-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.promo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: rgba(255,255,255,0.7);
+    border-radius: 10px;
+}
+.promo-info { display: flex; flex-direction: column; gap: 0.15rem; }
+.promo-product { font-weight: 600; font-size: 0.9rem; color: #1e293b; }
+.promo-dealer { font-size: 0.8rem; color: #64748b; }
+.promo-dealer a { color: inherit; text-decoration: none; border-bottom: 1px dashed #94a3b8; }
+.promo-dealer a:hover { color: #2563eb; border-color: #2563eb; }
+.promo-prices { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+.promo-regular { font-size: 0.8rem; color: #94a3b8; text-decoration: line-through; }
+.promo-offer { font-size: 0.95rem; font-weight: 700; color: #1e293b; }
+.promo-badge {
+    background: #dc2626;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+}
+
+/* Filter Bar */
+.filter-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #f8fafc;
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+    transition: box-shadow 0.2s, padding 0.2s;
+}
+.filter-bar.stuck {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 0.75rem 1rem;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    border-radius: 0 0 12px 12px;
+    background: rgba(248,250,252,0.95);
+    backdrop-filter: blur(8px);
+}
+.filter-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.weight-row { margin-top: 0.5rem; }
+.pill {
+    padding: 0.4rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 100px;
+    background: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.pill:hover { border-color: #cbd5e1; background: #f1f5f9; }
+.pill.active {
+    background: #0f172a;
+    color: #fff;
+    border-color: #0f172a;
+}
+.pill-gold.active { background: #d97706; border-color: #d97706; }
+.pill-silver.active { background: #64748b; border-color: #64748b; }
+
+/* Product Cards */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1rem;
+}
+.group-heading {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e2e8f0;
+    color: #1e293b;
+}
+.group-section { margin-bottom: 2rem; }
+
+.product-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s;
+}
+.product-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.card-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.75rem;
+}
+.card-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.card-table th {
+    text-align: left;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+.card-table th:nth-child(2),
+.card-table th:nth-child(3) { text-align: right; }
+.card-table td {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f8fafc;
+}
+.td-dealer { font-weight: 500; }
+.td-dealer a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(0,0,0,0.2);
+}
+.td-dealer a:hover { color: #2563eb; border-color: #2563eb; }
+.td-price {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+}
+.td-premium {
+    text-align: right;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.premium-low { color: #22c55e; }
+.premium-mid { color: #f59e0b; }
+.premium-high { color: #ef4444; }
+.oos { color: #94a3b8; font-style: italic; font-size: 0.75rem; }
+.oos-row td { color: #cbd5e1; }
+
+.cheapest-row td { color: #0f172a; }
+.cheapest-row .td-price {
+    font-weight: 800;
+    font-size: 0.95rem;
+}
+.best-badge {
+    display: inline-block;
+    background: #22c55e;
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+}
+.hidden-row { display: none; }
+
+.expand-btn {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.4rem;
+    border: 1px dashed #e2e8f0;
+    border-radius: 8px;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.expand-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+.card-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.card-savings {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #22c55e;
+}
+.card-premium {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .dashboard { padding: 1rem; }
+    h1 { font-size: 1.4rem; }
+    .spot-grid { grid-template-columns: 1fr; }
+    .spot-value { font-size: 1.4rem; }
+    .chart-wrapper { grid-template-columns: 1fr; }
+    .chart-box { height: 180px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .filter-row { overflow-x: auto; flex-wrap: nowrap; padding-bottom: 0.25rem; }
+    .filter-bar.stuck { margin-left: -1rem; margin-right: -1rem; }
+    .promo-item { flex-direction: column; align-items: flex-start; }
+    .promo-prices { margin-top: 0.25rem; }
 }
 """
