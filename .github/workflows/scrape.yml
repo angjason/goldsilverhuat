@@ -30,6 +30,8 @@ jobs:
       - run: playwright install chromium --with-deps
 
       - run: python main.py --output-dir docs --filename index
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
