@@ -23,6 +23,7 @@ def export_html(
     output_dir: Path | None = None,
     filename: str | None = None,
     failed_dealers: list[str] | None = None,
+    assessment: str | None = None,
 ) -> Path:
     """Generate an HTML report and return the file path."""
     if output_dir is None:
@@ -37,7 +38,7 @@ def export_html(
         filename = f"{filename}.html"
     filepath = output_dir / filename
 
-    html = _build_html(results, spot, history, timestamp, failed_dealers or [])
+    html = _build_html(results, spot, history, timestamp, failed_dealers or [], assessment)
     filepath.write_text(html)
 
     return filepath
@@ -76,6 +77,7 @@ def _build_html(
     history: list[SpotDataPoint] | None,
     timestamp: datetime,
     failed_dealers: list[str] | None = None,
+    assessment: str | None = None,
 ) -> str:
     groups: defaultdict[str, list[str]] = defaultdict(list)
 
@@ -114,6 +116,7 @@ def _build_html(
         )
 
     spot_html = _spot_hero(spot, history) if spot else ""
+    assessment_html = _assessment_section(assessment) if assessment else ""
     chart_html = _chart_section(history) if history else ""
     promo_html = _promotions_section(results)
     failed_html = ""
@@ -146,6 +149,7 @@ def _build_html(
     </header>
 
     {spot_html}
+    {assessment_html}
     {chart_html}
     {promo_html}
 
@@ -168,6 +172,19 @@ def _build_html(
 </script>
 </body>
 </html>"""
+
+
+def _assessment_section(assessment: str) -> str:
+    escaped = assessment.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    return f"""
+    <section class="assessment-section">
+        <div class="assessment-header">
+            <span class="assessment-icon">&#9672;</span>
+            <h2>Market Insight</h2>
+        </div>
+        <p class="assessment-text">{escaped}</p>
+        <span class="assessment-disclaimer">AI-generated analysis — not financial advice</span>
+    </section>"""
 
 
 def _spot_hero(spot: SpotPrices, history: list[SpotDataPoint] | None) -> str:
@@ -582,6 +599,43 @@ h1 {
     font-size: 0.7rem;
     font-weight: 700;
     flex-shrink: 0;
+}
+
+/* Assessment */
+.assessment-section {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 1px solid #bae6fd;
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.assessment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+.assessment-icon {
+    font-size: 1.1rem;
+    color: #0284c7;
+}
+.assessment-header h2 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0c4a6e;
+    margin: 0;
+}
+.assessment-text {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #1e293b;
+}
+.assessment-disclaimer {
+    display: block;
+    margin-top: 0.75rem;
+    font-size: 0.7rem;
+    color: #64748b;
+    font-style: italic;
 }
 
 /* Spot Hero */

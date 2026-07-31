@@ -14,3 +14,4 @@ pycparser==3.0
 pyee==13.0.1
 soupsieve==2.9.1
 typing_extensions==4.16.0
+google-genai>=1.0.0

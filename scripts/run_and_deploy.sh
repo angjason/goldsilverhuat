@@ -4,6 +4,7 @@ set -e
 cd "$(dirname "$0")/.."
 
 export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
+export GEMINI_API_KEY="${GEMINI_API_KEY:-}"
 
 echo "$(date): Starting scrape..."
 

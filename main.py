@@ -23,6 +23,7 @@ from output.console import print_results
 from output.csv_export import export
 from output.html_report import export_html
 from services.comparator import compare
+from services.market_assessment import generate_assessment
 from services.normalizer import normalize
 from services.spot_history import fetch_spot_history
 from services.spot_price import fetch_spot_prices
@@ -97,11 +98,16 @@ async def main(output_dir: Path | None = None, filename: str | None = None) -> N
 
     print_results(comparisons, spot)
 
+    assessment = generate_assessment(spot, history)
+    if assessment:
+        logger.info("Market assessment generated")
+
     csv_path = export(comparisons)
     html_path = export_html(
         comparisons, spot, history,
         output_dir=output_dir, filename=filename,
         failed_dealers=failed_dealers,
+        assessment=assessment,
     )
     logger.info("Results exported to %s", csv_path)
     logger.info("HTML report: %s", html_path)
