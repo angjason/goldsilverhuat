@@ -67,8 +67,8 @@ class PlaywrightScraper(abc.ABC):
                 if wait_selector:
                     try:
                         await page.wait_for_selector(wait_selector, timeout=30000)
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.debug("%s: selector '%s' not found on %s: %s", self.dealer_name, wait_selector, url, e)
 
                 content = await page.content()
                 await page.close()

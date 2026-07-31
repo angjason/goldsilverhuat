@@ -67,7 +67,8 @@ class IndigoScraper(BaseScraper):
 
             try:
                 html = await self.fetch(url)
-            except Exception:
+            except Exception as e:
+                logger.debug("%s: pagination stopped at page %d: %s", self.dealer_name, page, e)
                 break
 
             page_products = self._parse_listing(html)
@@ -103,8 +104,8 @@ class IndigoScraper(BaseScraper):
                     tier1_price = Decimal(content.replace(",", ""))
                     if tier1_price > 10:
                         product.price = tier1_price
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("Failed to fetch tier-1 price for %s: %s", product.url, e)
 
     def _parse_listing(self, html: str) -> list[ScrapedProduct]:
         soup = BeautifulSoup(html, "lxml")

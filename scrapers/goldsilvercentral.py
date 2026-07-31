@@ -76,7 +76,8 @@ class GoldSilverCentralScraper:
             try:
                 await asyncio.sleep(1)
                 html = await self._fetch(url)
-            except Exception:
+            except Exception as e:
+                logger.debug("%s: pagination stopped at page %d: %s", self.dealer_name, page, e)
                 break
 
             page_products = self._parse_product_grid(html)

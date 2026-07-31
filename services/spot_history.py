@@ -49,6 +49,8 @@ async def fetch_spot_history(months: int = 12) -> list[SpotDataPoint]:
     for result in results:
         if isinstance(result, SpotDataPoint):
             data_points.append(result)
+        elif isinstance(result, Exception):
+            logger.debug("Spot history fetch failed for a date: %s", result)
 
     logger.info("Fetched %d/%d historical spot prices", len(data_points), len(dates))
     return data_points
