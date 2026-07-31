@@ -152,14 +152,7 @@ class GoldSilverCentralScraper:
 
     @staticmethod
     def _parse_price(text: str) -> Decimal | None:
-        """Parse price from text like 'S$5,530.21' or 'SGD 5,530.21'."""
-        match = re.search(r"[\d,]+\.\d{2}", text)
-        if not match:
-            return None
-        cleaned = match.group().replace(",", "")
-        try:
-            return Decimal(cleaned)
-        except Exception:
-            return None
+        from scrapers.utils import parse_sgd_price
+        return parse_sgd_price(text, min_value=Decimal("0"))
 
 Scraper = GoldSilverCentralScraper

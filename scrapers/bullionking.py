@@ -115,24 +115,7 @@ class BullionKingScraper(PlaywrightScraper):
 
     @staticmethod
     def _extract_price(item) -> Decimal | None:
-        text = item.get_text()
-        patterns = [
-            r"S\$\s*([\d,]+\.\d{2})",
-            r"SGD\s*([\d,]+\.\d{2})",
-            r"\$\s*([\d,]+\.\d{2})",
-        ]
-
-        for pattern in patterns:
-            match = re.search(pattern, text)
-            if match:
-                cleaned = match.group(1).replace(",", "")
-                try:
-                    price = Decimal(cleaned)
-                    if price > 10:
-                        return price
-                except Exception:
-                    continue
-
-        return None
+        from scrapers.utils import parse_sgd_price
+        return parse_sgd_price(item.get_text())
 
 Scraper = BullionKingScraper

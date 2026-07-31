@@ -96,13 +96,7 @@ class UOBScraper(PlaywrightScraper):
 
     @staticmethod
     def _parse_price(text: str) -> Decimal | None:
-        match = re.search(r"([\d,]+\.\d{2})", text)
-        if not match:
-            return None
-        cleaned = match.group(1).replace(",", "")
-        try:
-            return Decimal(cleaned)
-        except Exception:
-            return None
+        from scrapers.utils import parse_sgd_price
+        return parse_sgd_price(text, min_value=Decimal("0"))
 
 Scraper = UOBScraper

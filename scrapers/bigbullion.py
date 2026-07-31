@@ -14,6 +14,7 @@ from bs4 import BeautifulSoup
 
 from models.product import ScrapedProduct
 from scrapers.playwright_base import PlaywrightScraper
+from scrapers.utils import resolve_url
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +77,7 @@ class BigBullionScraper(PlaywrightScraper):
             return None
 
         href = link.get("href", "")
-        url = href if href.startswith("http") else f"{self.base_url}{href}"
+        url = resolve_url(href, self.base_url)
 
         text = link.get_text().lower()
         in_stock = "out of stock" not in text
@@ -92,17 +93,8 @@ class BigBullionScraper(PlaywrightScraper):
 
     @staticmethod
     def _extract_price(text: str) -> Decimal | None:
-        match = re.search(r"S\$\s*([\d,]+\.\d{2})", text)
-        if not match:
-            return None
-        cleaned = match.group(1).replace(",", "")
-        try:
-            price = Decimal(cleaned)
-            if price > 10:
-                return price
-        except Exception:
-            pass
-        return None
+        from scrapers.utils import parse_sgd_price
+        return parse_sgd_price(text)
 
 
 Scraper = BigBullionScraper

@@ -18,6 +18,7 @@ from bs4 import BeautifulSoup
 
 from models.product import ScrapedProduct
 from scrapers.playwright_base import CHROME_PATH
+from scrapers.utils import resolve_url
 
 logger = logging.getLogger(__name__)
 
@@ -125,7 +126,7 @@ class LPMScraper:
             return None
 
         href = name_el.get("href", "")
-        url = href if href.startswith("http") else f"{self.base_url}{href}"
+        url = resolve_url(href, self.base_url)
 
         text = item.get_text().lower()
         in_stock = "out of stock" not in text
@@ -141,15 +142,10 @@ class LPMScraper:
 
     @staticmethod
     def _parse_price_text(item) -> Decimal | None:
+        from scrapers.utils import parse_sgd_price
         price_el = item.select_one(".price")
         if not price_el:
             return None
-        match = re.search(r"([\d,]+\.\d{2})", price_el.get_text())
-        if not match:
-            return None
-        try:
-            return Decimal(match.group(1).replace(",", ""))
-        except Exception:
-            return None
+        return parse_sgd_price(price_el.get_text())
 
 Scraper = LPMScraper
