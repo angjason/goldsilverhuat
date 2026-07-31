@@ -4,7 +4,14 @@ set -e
 cd "$(dirname "$0")/.."
 
 export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
-export GEMINI_API_KEY="${GEMINI_API_KEY:-}"
+
+# Load secrets from .env (gitignored)
+ENV_FILE="$(dirname "$0")/../.env"
+if [ -f "$ENV_FILE" ]; then
+    set -a
+    . "$ENV_FILE"
+    set +a
+fi
 
 echo "$(date): Starting scrape..."
 
