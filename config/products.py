@@ -99,16 +99,6 @@ def _build_brand_patterns(brand_aliases: list[str], weight_aliases: list[str]) -
     return patterns
 
 
-def _build_generic_patterns(metal: str, weight_aliases: list[str]) -> list[str]:
-    """Generate regex patterns for any-brand metal bar of a given weight."""
-    patterns = []
-    for weight in weight_aliases:
-        patterns.append(f"{metal}.*(?:bar|cast|minted).*{weight}")
-        patterns.append(f"{weight}.*{metal}.*(?:bar|cast|minted)")
-        patterns.append(f"{metal}.*{weight}")
-        patterns.append(f"{weight}.*{metal}")
-    return patterns
-
 
 def _generate_products() -> list[CanonicalProduct]:
     products: list[CanonicalProduct] = []
@@ -132,17 +122,6 @@ def _generate_products() -> list[CanonicalProduct]:
                     exclude_patterns=excludes,
                     patterns=_compile(patterns),
                 ))
-
-        for weight in weights:
-            patterns = _build_generic_patterns(metal, WEIGHT_ALIASES[weight])
-            products.append(CanonicalProduct(
-                name=f"{weight} {metal_label} Bar (any brand)",
-                metal=metal,
-                weight=weight,
-                min_price=min_prices[weight],
-                exclude_patterns=excludes,
-                patterns=_compile(patterns),
-            ))
 
     # --- Gold coins (manual) ---
     products.append(CanonicalProduct(

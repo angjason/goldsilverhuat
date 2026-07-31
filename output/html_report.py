@@ -187,9 +187,6 @@ def _top_deals_section(results: list[ComparisonResult], spot: SpotPrices | None)
     silver_deals = []
 
     for result in results:
-        if not re.search(r"\(any", result.canonical_name, re.IGNORECASE):
-            continue
-
         cheapest = result.cheapest
         if not cheapest:
             continue
@@ -199,8 +196,7 @@ def _top_deals_section(results: list[ComparisonResult], spot: SpotPrices | None)
             continue
 
         premium_pct = float((cheapest.price - spot_price) / spot_price * 100)
-        display_name = re.sub(r"\s*\(any brand\)", "", result.canonical_name)
-        entry = (display_name, cheapest.dealer, cheapest.price, premium_pct, cheapest.url)
+        entry = (result.canonical_name, cheapest.dealer, cheapest.price, premium_pct, cheapest.url)
 
         if "gold" in result.canonical_name.lower():
             gold_deals.append(entry)

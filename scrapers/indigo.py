@@ -85,27 +85,44 @@ class IndigoScraper(BaseScraper):
         return products
 
     async def _fetch_tier1_prices(self, products: list[ScrapedProduct]) -> None:
-        """Fetch Tier 1 (retail) prices from detail pages sequentially.
+        """Fetch Tier 1 (retail, qty 1-4) prices from detail pages.
 
-        The listing page shows the bulk discount (10+ qty) price.
-        The detail page has itemprop="price" content="X" with the Tier 1 price.
+        The listing page shows the bulk discount (10+ qty) "From" price.
+        The detail page has a tier table — we want the highest (Tier 1) price.
         """
-
         for product in products:
             if not product.url:
                 continue
             try:
                 await asyncio.sleep(1)
                 html = await self.fetch(product.url)
-                soup = BeautifulSoup(html, "lxml")
-                price_el = soup.select_one('[itemprop="price"][content]')
-                if price_el:
-                    content = price_el.get("content", "")
-                    tier1_price = Decimal(content.replace(",", ""))
-                    if tier1_price > 10:
-                        product.price = tier1_price
+                tier1_price = self._parse_tier1_price(html)
+                if tier1_price and tier1_price > 10:
+                    product.price = tier1_price
             except Exception as e:
                 logger.debug("Failed to fetch tier-1 price for %s: %s", product.url, e)
+
+    @staticmethod
+    def _parse_tier1_price(html: str) -> Decimal | None:
+        """Extract the Tier 1 (single unit) price from a detail page."""
+        soup = BeautifulSoup(html, "lxml")
+
+        all_prices = re.findall(r"SGD\s*([\d,]+\.\d{2})", soup.get_text())
+        if not all_prices:
+            return None
+
+        prices = []
+        for p in all_prices:
+            try:
+                prices.append(Decimal(p.replace(",", "")))
+            except Exception:
+                continue
+
+        valid = [p for p in prices if p > 100]
+        if not valid:
+            return None
+
+        return max(valid)
 
     def _parse_listing(self, html: str) -> list[ScrapedProduct]:
         soup = BeautifulSoup(html, "lxml")
