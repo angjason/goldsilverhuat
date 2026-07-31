@@ -96,33 +96,36 @@ class IndigoScraper(BaseScraper):
             try:
                 await asyncio.sleep(1)
                 html = await self.fetch(product.url)
-                tier1_price = self._parse_tier1_price(html)
-                if tier1_price and tier1_price > 10:
+                tier1_price = self._parse_tier1_price(html, product.price)
+                if tier1_price:
                     product.price = tier1_price
             except Exception as e:
                 logger.debug("Failed to fetch tier-1 price for %s: %s", product.url, e)
 
-    @staticmethod
-    def _parse_tier1_price(html: str) -> Decimal | None:
-        """Extract the Tier 1 (single unit) price from a detail page."""
-        soup = BeautifulSoup(html, "lxml")
+    def _parse_tier1_price(self, html: str, listing_price: Decimal) -> Decimal | None:
+        """Extract the Tier 1 (single unit, qty 1-4) price from a detail page.
 
-        all_prices = re.findall(r"SGD\s*([\d,]+\.\d{2})", soup.get_text())
-        if not all_prices:
+        Tier 1 is always slightly higher than the listing (bulk) price.
+        Find all SGD prices in the same ballpark as the listing price,
+        and return the highest — that's Tier 1.
+        """
+        soup = BeautifulSoup(html, "lxml")
+        text = soup.get_text()
+
+        all_matches = re.findall(r"SGD\s*([\d,]+\.\d{2})", text)
+        if not all_matches:
             return None
 
-        prices = []
-        for p in all_prices:
+        candidates = []
+        for m in all_matches:
             try:
-                prices.append(Decimal(p.replace(",", "")))
+                p = Decimal(m.replace(",", ""))
+                if p >= listing_price and p <= listing_price * Decimal("1.10"):
+                    candidates.append(p)
             except Exception:
                 continue
 
-        valid = [p for p in prices if p > 100]
-        if not valid:
-            return None
-
-        return max(valid)
+        return max(candidates) if candidates else None
 
     def _parse_listing(self, html: str) -> list[ScrapedProduct]:
         soup = BeautifulSoup(html, "lxml")
