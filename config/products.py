@@ -48,7 +48,7 @@ SILVER_BRAND_ALIASES: dict[str, list[str]] = {
 
 WEIGHT_ALIASES: dict[str, list[str]] = {
     "1g": [r"(?<!\d)1\s*g(?:ram)?(?:\b|$)", r"(?<!\d)1\s*gm\b"],
-    "5g": [r"(?<!\d)5\s*g(?:ram)?(?:\b|$)", r"(?<!\d)5\s*gm\b"],
+    "5g": [r"(?<![.\d])5\s*g(?:ram)?(?:\b|$)", r"(?<![.\d])5\s*gm\b"],
     "10g": [r"(?<!\d)10\s*g(?:ram)?(?:\b|$)", r"(?<!\d)10\s*gm\b"],
     "20g": [r"(?<!\d)20\s*g(?:ram)?(?:\b|$)", r"(?<!\d)20\s*gm\b"],
     "50g": [r"(?<!\d)50\s*g(?:ram)?(?:\b|$)", r"(?<!\d)50\s*gm\b"],
