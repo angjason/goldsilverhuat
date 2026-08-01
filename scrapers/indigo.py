@@ -105,9 +105,9 @@ class IndigoScraper(BaseScraper):
     def _parse_tier1_price(self, html: str, listing_price: Decimal) -> Decimal | None:
         """Extract the Tier 1 (single unit, qty 1-4) price from a detail page.
 
-        Tier 1 is always slightly higher than the listing (bulk) price.
-        Find all SGD prices in the same ballpark as the listing price,
-        and return the highest — that's Tier 1.
+        Tier pricing: Tier 1 > Tier 2 > ... > bulk (listing price).
+        Tier 1 is the highest price within 2% above the listing price.
+        The 2% cap excludes related product prices shown on the page.
         """
         soup = BeautifulSoup(html, "lxml")
         text = soup.get_text()
@@ -120,7 +120,7 @@ class IndigoScraper(BaseScraper):
         for m in all_matches:
             try:
                 p = Decimal(m.replace(",", ""))
-                if p >= listing_price and p <= listing_price * Decimal("1.10"):
+                if p >= listing_price and p <= listing_price * Decimal("1.02"):
                     candidates.append(p)
             except Exception:
                 continue
