@@ -1,9 +1,9 @@
-name: Scrape & Deploy
+name: Deploy to Pages
 
 on:
-  schedule:
-    - cron: '0 */4 * * *'
-  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [docs/**]
 
 permissions:
   contents: read
@@ -15,36 +15,19 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  scrape:
+  deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v5
-
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.12'
-          cache: 'pip'
-
-      - run: pip install -r requirements.txt
-
-      - run: playwright install chromium --with-deps
-
-      - run: python main.py --output-dir docs --filename index
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
           path: docs
 
-  deploy:
-    needs: scrape
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
