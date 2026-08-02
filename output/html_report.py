@@ -145,7 +145,7 @@ def _build_html(
     <header class="header">
         <div class="header-top">
             <h1>SG Bullion Prices</h1>
-            <p class="tagline">Because gold is gold, and silver is silver. I care about nothing but the price.</p>
+            <p class="tagline">Gold is gold, silver is silver—and plenty of dealers are selling the same thing at very different prices. We cut through the clutter and point you to the reputable dealer with the lowest all-in price. Bullion without the bull.</p>
             <span class="timestamp">{timestamp:%d %b %Y, %H:%M} SGT</span>
         </div>
         {failed_html}
