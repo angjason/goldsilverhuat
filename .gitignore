@@ -6,3 +6,4 @@ __pycache__/
 .chrome/
 .tmp/
 Local Storage/
+.claude/settings.local.json

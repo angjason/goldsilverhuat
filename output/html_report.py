@@ -5,16 +5,35 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 from datetime import datetime
+from decimal import Decimal
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from config.constants import TIMEZONE
+from config.products import PRODUCTS
 from models.product import ComparisonResult
 from services.spot_helper import get_spot_for_product
 from services.spot_history import SpotDataPoint
 from services.spot_price import SpotPrices
 
 OUTPUT_DIR = Path(__file__).parent.parent / "data"
+
+_TROY_OZ_IN_GRAMS = Decimal("31.1034768")
+_PRODUCT_WEIGHT = {p.name: p.weight for p in PRODUCTS}
+
+
+def _weight_to_grams(weight: str) -> Decimal | None:
+    """Convert a canonical weight string ('10g', '1oz', '1kg') to grams."""
+    match = re.match(r"^(\d+)(g|kg|oz)$", weight)
+    if not match:
+        return None
+    value = Decimal(match.group(1))
+    unit = match.group(2)
+    if unit == "g":
+        return value
+    if unit == "kg":
+        return value * 1000
+    return value * _TROY_OZ_IN_GRAMS
 
 
 def export_html(
@@ -511,20 +530,22 @@ def _product_card(result: ComparisonResult, spot: SpotPrices | None, group: str)
     if total_hidden > 0:
         expand_btn = f'<button class="expand-btn" onclick="toggleExpand(this)">Show {total_hidden} more</button>'
 
-    summary = ""
+    summary_parts = []
     if cheapest and len(in_stock) > 1:
         most_expensive = in_stock[-1]
         savings = most_expensive.price - cheapest.price
-        premium_text = ""
-        if spot_price and spot_price > 0:
-            premium_pct = float((cheapest.price - spot_price) / spot_price * 100)
-            premium_text = f'<span class="card-premium">{premium_pct:.1f}% over spot</span>'
+        summary_parts.append(f'<span class="card-savings">Save SGD {savings:,.2f}</span>')
 
-        summary = f"""
-        <div class="card-summary">
-            <span class="card-savings">Save SGD {savings:,.2f}</span>
-            {premium_text}
-        </div>"""
+    if cheapest and spot_price and spot_price > 0:
+        premium_pct = float((cheapest.price - spot_price) / spot_price * 100)
+        summary_parts.append(f'<span class="card-premium">{premium_pct:.1f}% over spot</span>')
+
+    grams = _weight_to_grams(_PRODUCT_WEIGHT.get(result.canonical_name, ""))
+    if cheapest and grams:
+        unit_price = cheapest.price / grams
+        summary_parts.append(f'<span class="card-unit-price">SGD {unit_price:,.2f}/g</span>')
+
+    summary = f'<div class="card-summary">{"".join(summary_parts)}</div>' if summary_parts else ""
 
     return f"""
     <div class="product-card">
@@ -1084,6 +1105,12 @@ h1 {
     font-size: 0.75rem;
     color: #94a3b8;
     font-weight: 500;
+}
+.card-unit-price {
+    font-size: 0.75rem;
+    color: #2563eb;
+    font-weight: 600;
+    margin-left: auto;
 }
 
 /* Mobile */
